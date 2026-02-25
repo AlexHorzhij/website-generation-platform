@@ -11,6 +11,7 @@ import { getLangDir } from "rtl-detect";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import DirectionProvider from "@/providers/direction-provider";
+import QueryProvider from "@/providers/query-provider";
 
 export const metadata: Metadata = {
   title: "Dashcode admin Template",
@@ -41,9 +42,11 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <MountedProvider>
-              <DirectionProvider direction={direction}>
-                {children}
-              </DirectionProvider>
+              <QueryProvider>
+                <DirectionProvider direction={direction}>
+                  {children}
+                </DirectionProvider>
+              </QueryProvider>
             </MountedProvider>
             <Toaster />
             <SonnerToaster />

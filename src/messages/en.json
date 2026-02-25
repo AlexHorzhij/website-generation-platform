@@ -284,7 +284,11 @@
     "table_owner": "Owner",
     "table_status": "Status",
     "table_autogeneration": "Autogeneration",
-    "table_actions": "Actions"
+    "table_actions": "Actions",
+    "action_view": "View",
+    "action_delete": "Delete",
+    "items_selected": "of row(s) selected",
+    "filter_placeholder": "Filter status..."
   },
   "DashboardStats": {
     "total_sites": "Total Sites",
@@ -295,5 +299,20 @@
     "version": "Version's",
     "changelog": "CHANGELOG",
     "versionHistory": "VERSION HISTORY"
+  },
+  "SiteDetails": {
+    "back_to_sites": "Back to Sites",
+    "total_listings": "Total Listings",
+    "total_users": "Total Users",
+    "site_owner": "Site Owner",
+    "coming_soon": "Coming soon",
+    "site_details": "Site Details",
+    "site_id": "Site ID",
+    "domain": "Domain",
+    "status": "Status",
+    "images_folder": "Images Folder",
+    "autogeneration": "Autogeneration",
+    "autogen_per_day": "Autogen per day",
+    "region": "Region"
   }
 }

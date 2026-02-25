@@ -13,14 +13,14 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "@/components/navigation";
+import { useLogin } from "@/hooks/use-auth";
 
 const schema = z.object({
   email: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
 const LoginForm = () => {
-  const [isPending, startTransition] = React.useTransition();
-  const router = useRouter();
+  const { mutate: login, isPending } = useLogin();
   const [passwordType, setPasswordType] = React.useState("password");
 
   const togglePasswordType = () => {
@@ -38,20 +38,13 @@ const LoginForm = () => {
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues: {
-      email: "dashcode@codeshaper.net",
-      password: "password",
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    startTransition(async () => {
-      try {
-        router.push("/dashboard/analytics");
-        toast.success("Successfully logged in");
-      } catch (err: any) {
-        toast.error(err.message);
-      }
-    });
+    login(data);
   };
 
   return (
@@ -62,6 +55,7 @@ const LoginForm = () => {
         </Label>
         <Input
           size="lg"
+          placeholder="Enter your email"
           disabled={isPending}
           {...register("email")}
           type="email"
@@ -84,12 +78,12 @@ const LoginForm = () => {
         <div className="relative">
           <Input
             size="lg"
+            placeholder="Enter your password"
             disabled={isPending}
             {...register("password")}
             type={passwordType}
             id="password"
             className="peer  "
-            placeholder=" "
           />
 
           <div

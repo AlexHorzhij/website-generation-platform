@@ -1,5 +1,7 @@
+import UsersClient from "./_components/users-client";
+
 const UsersPage = () => {
-  return <h1 className="text-2xl">Users page Your Content goes here... </h1>;
+  return <UsersClient />;
 };
 
 export default UsersPage;

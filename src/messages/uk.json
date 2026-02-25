@@ -284,7 +284,11 @@
     "table_owner": "Власник",
     "table_status": "Статус",
     "table_autogeneration": "Автогенерація",
-    "table_actions": "Дії"
+    "table_actions": "Дії",
+    "action_view": "Переглянути",
+    "action_delete": "Видалити",
+    "items_selected": "рядків вибрано",
+    "filter_placeholder": "Фільтрувати статус..."
   },
   "DashboardStats": {
     "total_sites": "Всього сайтів",
@@ -295,5 +299,20 @@
     "version": "Версії",
     "changelog": "ЖУРНАЛ ЗМІН",
     "versionHistory": "ІСТОРІЯ ВЕРСІЙ"
+  },
+  "SiteDetails": {
+    "back_to_sites": "До сайтів",
+    "total_listings": "Усього оголошень",
+    "total_users": "Усього користувачів",
+    "site_owner": "Власник сайту",
+    "coming_soon": "Скоро буде",
+    "site_details": "Деталі сайту",
+    "site_id": "ID сайту",
+    "domain": "Домен",
+    "status": "Статус",
+    "images_folder": "Папка із зображеннями",
+    "autogeneration": "Автогенерація",
+    "autogen_per_day": "Генерацій на день",
+    "region": "Регіон"
   }
 }
