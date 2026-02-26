@@ -9,10 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { UserActions } from "./user-actions";
 
 const UsersClient = () => {
   const { data: users, isLoading, error } = useUsers();
@@ -40,34 +41,17 @@ const UsersClient = () => {
       </div>
 
       <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
-        <CardHeader className="flex flex-row items-center justify-between py-6 px-6 bg-white dark:bg-slate-900">
-          <CardTitle className="text-xl font-bold text-default-900">
-            System Users Records
-          </CardTitle>
-        </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-white dark:bg-slate-900 border-y border-default-100">
+              <TableHeader>
                 <TableRow className="hover:bg-transparent border-none">
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900 w-[80px]">
-                    ID
-                  </TableHead>
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900">
-                    Username
-                  </TableHead>
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900">
-                    Email
-                  </TableHead>
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900 text-center">
-                    Role
-                  </TableHead>
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900">
-                    Site
-                  </TableHead>
-                  <TableHead className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900 text-right">
-                    Created At
-                  </TableHead>
+                  <TableHead className="w-[80px]">ID</TableHead>
+                  <TableHead>Username</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead className="text-center">Role</TableHead>
+                  <TableHead className="text-right">Created At</TableHead>
+                  <TableHead className="w-[80px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -75,39 +59,38 @@ const UsersClient = () => {
                   <TableRow>
                     <TableCell
                       colSpan={6}
-                      className="h-24 text-center text-default-500"
+                      className="text-center text-default-500"
                     >
                       No users found.
                     </TableCell>
                   </TableRow>
                 ) : (
                   users.map((user) => (
-                    <TableRow
-                      key={user.id}
-                      className="h-14 border-b border-default-50 hover:bg-default-50/50 transition-colors"
-                    >
-                      <TableCell className="px-6 py-3 text-default-500 font-medium">
+                    <TableRow key={user.id}>
+                      <TableCell className="text-default-500 font-medium">
                         #{user.id}
                       </TableCell>
-                      <TableCell className="px-6 py-3 font-bold text-default-900">
+                      <TableCell className="font-bold text-default-900">
                         {user.username}
                       </TableCell>
-                      <TableCell className="px-6 py-3 text-default-600">
+                      <TableCell className="text-default-600 lowercase">
                         {user.email}
                       </TableCell>
-                      <TableCell className="px-6 py-3 text-center">
+                      <TableCell className="text-center">
                         <Badge
-                          color={user.role === "ADMIN" ? "primary" : "default"}
+                          color={
+                            user.role === "ADMIN" ? "primary" : "secondary"
+                          }
                           className="capitalize rounded-full px-4 py-1 font-semibold text-[11px]"
                         >
                           {user.role}
                         </Badge>
                       </TableCell>
-                      <TableCell className="px-6 py-3 text-default-600 italic">
-                        {user.site || "N/A"}
-                      </TableCell>
-                      <TableCell className="px-6 py-3 text-right text-default-500 font-medium whitespace-nowrap">
+                      <TableCell className="text-right text-default-500 font-medium whitespace-nowrap">
                         {format(new Date(user.createdAt), "dd MMM yyyy, HH:mm")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <UserActions user={user} />
                       </TableCell>
                     </TableRow>
                   ))

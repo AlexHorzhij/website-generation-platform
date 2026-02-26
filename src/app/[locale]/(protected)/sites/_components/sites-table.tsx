@@ -121,11 +121,12 @@ export function SitesTable({ translations }: SitesTableProps) {
       ),
     },
     {
-      accessorKey: "siteName",
+      id: "siteNameCol",
+      accessorKey: "domainName",
       header: translations.site_name.toUpperCase(),
       cell: ({ row }) => (
-        <div className="font-bold text-default-900 whitespace-nowrap">
-          {row.getValue("siteName")}
+        <div className="font-bold text-default-900 whitespace-nowrap lowercase">
+          {row.getValue("domainName")}
         </div>
       ),
     },
@@ -167,11 +168,11 @@ export function SitesTable({ translations }: SitesTableProps) {
       ),
     },
     {
-      accessorKey: "folder",
+      accessorKey: "bucketName",
       header: translations.folder.toUpperCase(),
       cell: ({ row }) => (
         <div className="text-default-500 whitespace-nowrap">
-          {row.getValue("folder")}
+          {row.getValue("bucketName")}
         </div>
       ),
     },

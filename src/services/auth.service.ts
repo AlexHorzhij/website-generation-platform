@@ -1,5 +1,6 @@
 import apiClient from "@/lib/axios";
 import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
+import Cookies from "js-cookie";
 
 export const authService = {
   login: async (data: LoginData): Promise<AuthResponse> => {
@@ -7,11 +8,6 @@ export const authService = {
     const response = await apiClient.post<AuthResponse>(
       "/api/public/users/login",
       data,
-      {
-        headers: {
-          "X-API-Key": "1111",
-        },
-      },
     );
     console.log("response", response);
     return response.data;
@@ -23,12 +19,12 @@ export const authService = {
   },
 
   getMe: async (): Promise<any> => {
-    const response = await apiClient.get("/auth/me");
+    const response = await apiClient.get("/api/public/users/me");
     return response.data;
   },
 
   logout: () => {
-    localStorage.removeItem("token");
+    Cookies.remove("go_market_token");
     localStorage.removeItem("user");
   },
 };

@@ -3,6 +3,7 @@ import { authService } from "@/services/auth.service";
 import { LoginData, RegisterData } from "@/types/auth";
 import { useRouter } from "@/components/navigation";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 export const useLogin = () => {
   const router = useRouter();
@@ -10,10 +11,9 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (data: LoginData) => authService.login(data),
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      Cookies.set("go_market_token", data.sessionId, { expires: 7, path: "/" });
       toast.success("Successfully logged in");
-      router.push("/dashboard/analytics");
+      router.push("/");
     },
     onError: (error: any) => {
       const message =
@@ -30,10 +30,9 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: (data: RegisterData) => authService.register(data),
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      Cookies.set("go_market_token", data.sessionId, { expires: 7, path: "/" });
       toast.success("Registration successful");
-      router.push("/dashboard/analytics");
+      router.push("/");
     },
     onError: (error: any) => {
       const message =
@@ -59,8 +58,18 @@ export const useLogout = () => {
 export const useMe = () => {
   return useQuery({
     queryKey: ["me"],
-    queryFn: authService.getMe,
+    queryFn: async () => {
+      // TODO: Remove this mock when the backend endpoint is ready
+      return {
+        id: 1,
+        username: "admin",
+        email: "admin@example.com",
+        role: "ADMIN",
+        createdAt: new Date().toISOString(),
+        site: "Go Market",
+      };
+    },
     retry: false,
-    enabled: !!(typeof window !== "undefined" && localStorage.getItem("token")),
+    enabled: true,
   });
 };

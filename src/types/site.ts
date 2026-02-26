@@ -12,32 +12,50 @@ export interface SiteTheme {
   id: number;
 }
 
+export interface Category {
+  name: string;
+  description: string;
+}
+
+export interface CreateSiteRequest {
+  domainName: string;
+  siteName: string;
+  region: string;
+  themeId: number;
+  currency: string;
+  description: string;
+  categories: Category[];
+}
+
+export interface CategoryGenerationRequest {
+  siteName: string;
+  description: string;
+  region: string;
+  prompt: string;
+}
+
 export interface Site {
   id: number;
   domainName: string;
-  siteName: string;
+  marketplaceName: string;
   description?: string;
-  siteNameEn?: string;
+  marketplaceNameEn?: string;
   descriptionEn?: string;
   apiKey?: string;
   region: string;
   subregions?: string;
-  currency?: string;
-  theme?: SiteTheme;
-  owner: SiteOwner;
+  themeId: number;
+  ownerId: number;
   status: string;
+  awsRegion?: string;
+  bucketName?: string;
+  currency?: string;
   language?: string;
   categories?: string;
   autogeneration: boolean;
-  categoryIndex?: number;
-  folder: string;
-  imageIndex?: number;
-  regionIndex?: number;
-  contactsIndex?: number;
   autogenPerDay: number;
-  lastAutogenAt?: string;
-  pendingRegionsCount?: number;
   seoTitle?: string;
   seoDescription?: string;
   h1?: string;
+  owner?: SiteOwner;
 }

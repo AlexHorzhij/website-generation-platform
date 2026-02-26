@@ -149,7 +149,7 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
               />
               <DetailItem
                 label={t.images_folder}
-                value={site.folder}
+                value={site.bucketName}
                 className="text-primary font-mono"
               />
               <DetailItem

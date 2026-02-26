@@ -3,7 +3,6 @@ import Social from "@/components/partials/auth/social";
 import Logo from "@/components/partials/auth/logo";
 import Copyright from "@/components/partials/auth/copyright";
 import { Link } from "@/i18n/routing";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { Separator } from "@/components/ui/separator";
 
@@ -17,8 +16,6 @@ interface LoginPageProps {
 }
 
 const LoginPage = async ({ params }: LoginPageProps) => {
-  const { locale } = await params;
-
   return (
     <div className="flex justify-center w-full min-h-screen">
       {/* <div>

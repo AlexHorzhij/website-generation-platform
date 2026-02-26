@@ -6,6 +6,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
 import { SiteService } from "@/services/site-service";
 import { siteKeys } from "@/hooks/use-sites";
+import { Link } from "@/components/navigation";
 
 const SitesPage = async () => {
   const t = await getTranslations("SitesManagement");
@@ -39,10 +40,12 @@ const SitesPage = async () => {
           {t("title")}
         </h2>
         <div className="flex gap-3">
-          <Button color="primary" size="md">
-            <Icon icon="heroicons:plus" className="w-4 h-4 me-2" />
-            Create New Site
-          </Button>
+          <Link href="/sites/new">
+            <Button color="primary" size="md">
+              <Icon icon="heroicons:plus" className="w-4 h-4 me-2" />
+              Create New Site
+            </Button>
+          </Link>
         </div>
       </div>
 

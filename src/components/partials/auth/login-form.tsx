@@ -16,7 +16,7 @@ import { useRouter } from "@/components/navigation";
 import { useLogin } from "@/hooks/use-auth";
 
 const schema = z.object({
-  email: z.string().email({ message: "Your email is invalid." }),
+  username: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
 const LoginForm = () => {
@@ -38,7 +38,7 @@ const LoginForm = () => {
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -57,17 +57,17 @@ const LoginForm = () => {
           size="lg"
           placeholder="Enter your email"
           disabled={isPending}
-          {...register("email")}
+          {...register("username")}
           type="email"
           id="email"
           className={cn("", {
-            "border-destructive ": errors.email,
+            "border-destructive ": errors.username,
           })}
         />
       </div>
-      {errors.email && (
+      {errors.username && (
         <div className=" text-destructive mt-2 text-sm">
-          {errors.email.message}
+          {errors.username.message}
         </div>
       )}
 

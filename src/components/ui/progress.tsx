@@ -41,7 +41,7 @@ interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPr
   isAnimate?: boolean
 }
 
-const Progress = React.forwardRef<React.ElementRef<typeof ProgressPrimitive.Root>, ProgressProps>(({ className, value, color, size, showValue, isStripe, isAnimate, ...props }, ref) => {
+const Progress = React.forwardRef<React.ComponentRef<typeof ProgressPrimitive.Root>, ProgressProps>(({ className, value, color, size, showValue, isStripe, isAnimate, ...props }, ref) => {
   const stripeStyles = isStripe
     ? {
       backgroundImage: `linear-gradient(

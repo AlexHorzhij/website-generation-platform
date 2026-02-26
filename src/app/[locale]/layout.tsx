@@ -49,7 +49,7 @@ export default async function RootLayout({
               </QueryProvider>
             </MountedProvider>
             <Toaster />
-            <SonnerToaster />
+            <SonnerToaster position="top-center" />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

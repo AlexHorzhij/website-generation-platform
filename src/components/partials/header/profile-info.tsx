@@ -21,9 +21,9 @@ const ProfileInfo = () => {
   const { data: user } = useMe();
   const { logout } = useLogout();
 
-  const userName = user?.name || "Jhon Doe";
+  const userName = user?.username || "Jhon Doe";
   const userEmail = user?.email || "info@codeshaper.net";
-  const userAvatar = user?.avatar || "/images/avatar/av-1.jpg";
+  const userAvatar = "/images/avatar/av-1.jpg";
 
   return (
     <div className="md:block hidden">

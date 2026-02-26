@@ -35,15 +35,22 @@ export const UserService = {
     ];
 
     try {
-      const response = await apiClient.get<User[]>("/admin/v1/users", {
-        headers: {
-          "X-API-Key": "1111",
-        },
-      });
+      const response = await apiClient.get<User[]>("/api/v1/users");
+      if (!response.data.length) {
+        return mockUsers;
+      }
       return response.data;
     } catch (error) {
       console.warn("Backend not available, using mock user data", error);
       return mockUsers;
     }
+  },
+
+  async makeAdmin(userId: number): Promise<void> {
+    await apiClient.post(`/api/v1/users/${userId}/make-admin`);
+  },
+
+  async deleteUser(userId: number): Promise<void> {
+    await apiClient.delete(`/api/v1/users/${userId}`);
   },
 };

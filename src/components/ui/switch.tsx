@@ -43,7 +43,7 @@ interface SwitchProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimit
 }
 
 const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
+  React.ComponentRef<typeof SwitchPrimitives.Root>,
   SwitchProps
 >(({ color, size, startContent, endContent, className, ...props }, ref) => (
   <SwitchPrimitives.Root

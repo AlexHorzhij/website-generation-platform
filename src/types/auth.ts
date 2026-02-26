@@ -7,17 +7,17 @@ export interface User {
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
+  message: string;
+  sessionId: string;
 }
 
 export interface LoginData {
-  email: string;
+  username: string;
   password?: string;
 }
 
 export interface RegisterData {
-  name?: string;
+  username?: string;
   email: string;
   password?: string;
   confirmPassword?: string;
