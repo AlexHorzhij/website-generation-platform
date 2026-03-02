@@ -94,6 +94,54 @@ export function getMenuList(pathname: string, t: any): Group[] {
     },
   ];
 }
+
+export function getSiteMenuList(
+  pathname: string,
+  siteId: string,
+  t: any,
+): Group[] {
+  const base = `/sites/${siteId}`;
+  return [
+    {
+      groupLabel: "",
+      id: "site-nav",
+      menus: [
+        {
+          id: "site-info",
+          href: base,
+          label: t("site_info"),
+          active: pathname === base || pathname === `${base}/`,
+          icon: "heroicons-outline:information-circle",
+          submenus: [],
+        },
+        {
+          id: "site-listings",
+          href: `${base}/listings`,
+          label: t("site_listings"),
+          active: pathname.startsWith(`${base}/listings`),
+          icon: "heroicons-outline:view-list",
+          submenus: [],
+        },
+        {
+          id: "site-contacts",
+          href: `${base}/contacts`,
+          label: t("site_contacts"),
+          active: pathname.startsWith(`${base}/contacts`),
+          icon: "heroicons-outline:phone",
+          submenus: [],
+        },
+        {
+          id: "site-seo",
+          href: `${base}/seo`,
+          label: t("site_seo"),
+          active: pathname.startsWith(`${base}/seo`),
+          icon: "heroicons-outline:search",
+          submenus: [],
+        },
+      ],
+    },
+  ];
+}
 export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {

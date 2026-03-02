@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -36,18 +37,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Site } from "@/types/site";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { TableActions } from "@/components/ui-kit/table/table-actions";
 
 import { useSites } from "@/hooks/use-sites";
 
@@ -131,23 +127,22 @@ export function SitesTable({ translations }: SitesTableProps) {
       ),
     },
     {
-      accessorKey: "owner",
+      accessorKey: "ownerName",
       header: translations.owner.toUpperCase(),
       cell: ({ row }) => {
-        const owner = row.original.owner;
-        const username = owner?.username || "N/A";
+        const ownerName = row.original.ownerName;
         return (
           <div className="flex items-center gap-3">
             <Avatar className="w-8 h-8">
               <AvatarImage
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${ownerName}`}
               />
               <AvatarFallback>
-                {username.slice(0, 2).toUpperCase()}
+                {ownerName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <span className="text-default-600 font-medium whitespace-nowrap">
-              {username}
+              {ownerName}
             </span>
           </div>
         );
@@ -196,36 +191,23 @@ export function SitesTable({ translations }: SitesTableProps) {
       header: () => (
         <div className="text-end">{translations.actions.toUpperCase()}</div>
       ),
-      cell: ({ row }) => (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-8 h-8 rounded-full hover:bg-default-100"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreVertical className="h-4 w-4 text-default-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="p-1">
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(`/${locale}/sites/${row.original.id}`)
-                }
-              >
-                <Eye className="w-3.5 h-3.5 mr-2" />
-                {translations.action_view}
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive focus:text-destructive">
-                <Trash2 className="w-3.5 h-3.5 mr-2" />
-                {translations.action_delete}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const actions = [
+          {
+            label: translations.action_view,
+            icon: <Eye />,
+            onClick: () => router.push(`/${locale}/sites/${row.original.id}`),
+          },
+          {
+            label: translations.action_delete,
+            icon: <Trash2 />,
+            onClick: () => console.log("Delete", row.original.id),
+            variant: "destructive" as const,
+          },
+        ];
+
+        return <TableActions actions={actions} />;
+      },
     },
   ];
 
@@ -249,6 +231,10 @@ export function SitesTable({ translations }: SitesTableProps) {
       pagination,
     },
   });
+
+  if (isLoading) {
+    return <Loader2 className="animate-spin" />;
+  }
 
   return (
     <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">

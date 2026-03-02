@@ -1,14 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { TableActions } from "@/components/ui-kit/table/table-actions";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -97,31 +91,21 @@ export const UserActions = ({ user }: UserActionsProps) => {
 
   return (
     <>
-      <div className="flex justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-8 h-8 rounded-full hover:bg-default-100"
-            >
-              <MoreVertical className="h-4 w-4 text-default-500" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[160px] p-1">
-            <DropdownMenuItem onClick={() => setIsViewDialogOpen(true)}>
-              <Eye className="mr-2 h-4 w-4" /> View
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => setIsDeleteDialogOpen(true)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <TableActions
+        actions={[
+          {
+            label: "View",
+            icon: <Eye />,
+            onClick: () => setIsViewDialogOpen(true),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 />,
+            onClick: () => setIsDeleteDialogOpen(true),
+            variant: "destructive",
+          },
+        ]}
+      />
 
       {/* View & Edit Role Dialog */}
       <Dialog

@@ -21,6 +21,8 @@ import { Loader2 } from "lucide-react";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
+import { useTranslations } from "next-intl";
+
 interface ListingAnalyticsProps {
   siteId: string;
 }
@@ -28,6 +30,7 @@ interface ListingAnalyticsProps {
 type Period = "1w" | "1m" | "1q" | "1y";
 
 const ListingAnalytics = ({ siteId }: ListingAnalyticsProps) => {
+  const t = useTranslations("Listings");
   const { data: listings, isLoading } = useListings(siteId);
   const [period, setPeriod] = useState<Period>("1w");
   const { theme: mode } = useTheme();
@@ -82,14 +85,14 @@ const ListingAnalytics = ({ siteId }: ListingAnalyticsProps) => {
     return {
       series: [
         {
-          name: "Listings",
+          name: t("title"),
           data: counts,
         },
       ],
       categories,
       totalInPeriod,
     };
-  }, [listings, period]);
+  }, [listings, period, t]);
 
   const options: any = {
     chart: {
@@ -164,14 +167,14 @@ const ListingAnalytics = ({ siteId }: ListingAnalyticsProps) => {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle className="text-lg font-bold">
-            Listings Performance
+            {t("performance_title")}
           </CardTitle>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-2xl font-bold text-default-900">
               {chartData.totalInPeriod}
             </span>
             <span className="text-xs text-muted-foreground self-end mb-1">
-              total in selected period
+              {t("total_in_period")}
             </span>
           </div>
         </div>

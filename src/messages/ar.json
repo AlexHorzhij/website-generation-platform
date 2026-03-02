@@ -1,4 +1,19 @@
 {
+  "General": {
+    "description": "الوصف",
+    "description_en": "الوصف (English)",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "actions": "أجراءات",
+    "action_view": "عرض",
+    "action_delete": "حذف",
+    "status": "حالة",
+    "region": "منطقة",
+    "id": "ID",
+    "title": "عنوان",
+    "title_en": "عنوان (English)",
+    "domain": "نطاق"
+  },
   "Index": {
     "title": " مرحبا بك في موقعنا"
   },
@@ -273,5 +288,10 @@
     "version": "النسخة",
     "changelog": "سجل التغيير",
     "versionHistory": "تاريخ النسخة"
+  },
+  "Listings": {
+    "performance_title": "أداء القوائم",
+    "total_in_period": "إجمالي الفترة المختارة",
+    "field_images_folder": "مجلد الصور"
   }
 }

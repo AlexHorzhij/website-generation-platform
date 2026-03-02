@@ -20,7 +20,7 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
   // Prefetch data on the server
   await queryClient.prefetchQuery({
     queryKey: siteKeys.detail(id),
-    queryFn: () => SiteService.getSiteById(id),
+    queryFn: () => SiteService.getSiteById(Number(id)),
   });
 
   const translations = {
@@ -35,6 +35,9 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
     domain: t("domain"),
     images_folder: t("images_folder"),
     status: t("status"),
+    view_listings: await getTranslations("Listings").then((lt) =>
+      lt("view_listings"),
+    ),
   };
 
   return (

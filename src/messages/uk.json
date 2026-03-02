@@ -1,4 +1,19 @@
 {
+  "General": {
+    "description": "Опис",
+    "description_en": "Опис (English)",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "actions": "Дії",
+    "action_view": "Переглянути",
+    "action_delete": "Видалити",
+    "status": "Статус",
+    "region": "Регіон",
+    "id": "ID",
+    "title": "Заголовок",
+    "title_en": "Заголовок (English)",
+    "domain": "Домен"
+  },
   "Index": {
     "title": "Привіт, світе!"
   },
@@ -273,7 +288,12 @@
     "listings": "Оголошення",
     "contacts": "Контакти",
     "domains": "Домени",
-    "prompts": "Промпти"
+    "prompts": "Промпти",
+    "back_to_sites": "До списку сайтів",
+    "site_info": "Інфо",
+    "site_listings": "Оголошення",
+    "site_contacts": "Контакти",
+    "site_seo": "SEO"
   },
   "SitesManagement": {
     "title": "Керування сайтами",
@@ -314,5 +334,49 @@
     "autogeneration": "Автогенерація",
     "autogen_per_day": "Генерацій на день",
     "region": "Регіон"
+  },
+  "Listings": {
+    "title": "Оголошення сайту",
+    "view_listings": "Переглянути оголошення",
+    "table_title": "Назва",
+    "table_price": "Ціна",
+    "table_category": "Категорія",
+    "table_status": "Статус",
+    "table_views": "Перегляди",
+    "table_date": "Дата створення",
+    "stats_total": "Усього оголошень",
+    "stats_autogeneration": "Автогенерація",
+    "stats_autogen_per_day": "Генерацій на день",
+    "stats_images_folder": "Папка із зображеннями",
+    "stats_total_listings": "Усього оголошень",
+    "actions": "Дії",
+    "action_view": "Переглянути",
+    "action_delete": "Видалити",
+    "details_title": "Інформація про оголошення",
+    "field_id": "ID",
+    "field_title": "Заголовок",
+    "field_description": "Опис",
+    "field_price": "Ціна",
+    "field_status": "Статус",
+    "field_created": "Створено",
+    "field_views": "Перегляди",
+    "field_username": "Користувач",
+    "field_site": "Сайт",
+    "field_category": "Категорія",
+    "field_region": "Регіон",
+    "field_contact": "Контакт",
+    "field_theme": "Тема",
+    "field_images": "Зображення",
+    "field_no_images": "Зображення відсутні",
+    "create_listing": "Створити оголошення",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "field_title_en": "Заголовок (English)",
+    "field_category_id": "ID Категорії",
+    "field_theme_id": "ID Теми",
+    "field_images_folder": "Папка із зображеннями",
+    "select_folder": "Оберіть папку",
+    "performance_title": "Ефективність оголошень",
+    "total_in_period": "усього за вибраний період"
   }
 }

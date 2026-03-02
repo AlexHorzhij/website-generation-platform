@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Ellipsis, LogOut } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { usePathname } from "@/components/navigation";
 import { cn } from "@/lib/utils";
-import { getMenuList } from "@/lib/menus";
+import { getMenuList, getSiteMenuList } from "@/lib/menus";
 import {
   Tooltip,
   TooltipTrigger,
@@ -22,9 +22,14 @@ import Logo from "@/components/logo";
 import SidebarHoverToggle from "@/components/partials/sidebar/sidebar-hover-toggle";
 import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Link } from "@/i18n/routing";
+
+// Matches /sites/123, /sites/123/listings, etc. — but NOT /sites (list)
+const SITE_DETAIL_RE = /^\/sites\/(\d+)(\/.*)?$/;
 
 export function MenuClassic({}) {
-  // translate
   const t = useTranslations("Menu");
   const pathname = usePathname();
   const params = useParams<{ locale: string }>();
@@ -32,8 +37,7 @@ export function MenuClassic({}) {
 
   const isDesktop = useMediaQuery("(min-width: 1280px)");
 
-  const menuList = getMenuList(pathname, t);
-  const [config, setConfig] = useConfig();
+  const [config] = useConfig();
   const collapsed = config.collapsed;
   const [hoverConfig] = useMenuHoverConfig();
   const { hovered } = hoverConfig;
@@ -55,17 +59,69 @@ export function MenuClassic({}) {
     scrollableNodeRef.current?.addEventListener("scroll", handleScroll);
   }, [scrollableNodeRef]);
 
+  // ── Detect site context ────────────────────────────────────────────────────
+  const siteMatch = SITE_DETAIL_RE.exec(pathname);
+  const siteId = siteMatch?.[1] ?? null;
+  const isSiteContext = !!siteId;
+
+  const menuList = isSiteContext
+    ? getSiteMenuList(pathname, siteId!, t)
+    : getMenuList(pathname, t);
+
   return (
     <>
       {isDesktop && (
-        <div className="flex items-center justify-between  px-4 py-4">
+        <div className="flex items-center justify-between px-4 py-4">
           <Logo />
           <SidebarHoverToggle />
         </div>
       )}
 
-      <nav className="mt-8 h-full w-full">
-        <ul className=" h-full flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-4">
+      {/* Back button when inside a site */}
+      {isSiteContext && (!collapsed || hovered) && (
+        <div className="px-4 pt-2 pb-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-sm font-medium text-default-600 hover:text-default-900 gap-2 px-2"
+            asChild
+          >
+            <Link href="/sites">
+              <Icon
+                icon="heroicons-outline:arrow-left"
+                className="w-4 h-4 flex-shrink-0"
+              />
+              <span className="truncate">{t("back_to_sites")}</span>
+            </Link>
+          </Button>
+          <div className="mt-2 mb-1 h-px bg-default-100" />
+        </div>
+      )}
+
+      {/* Collapsed-only back button */}
+      {isSiteContext && collapsed && !hovered && isDesktop && (
+        <div className="flex justify-center px-2 pt-2 pb-1">
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+                  <Link href="/sites">
+                    <Icon
+                      icon="heroicons-outline:arrow-left"
+                      className="w-5 h-5"
+                    />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">{t("back_to_sites")}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div className="mt-1 h-px bg-default-100 w-full" />
+        </div>
+      )}
+
+      <nav className="mt-4 h-full w-full">
+        <ul className="h-full flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-4">
           {menuList?.map(({ groupLabel, menus }, index) => (
             <li className={cn("w-full", groupLabel ? "" : "")} key={index}>
               {((!collapsed || hovered) && groupLabel) ||

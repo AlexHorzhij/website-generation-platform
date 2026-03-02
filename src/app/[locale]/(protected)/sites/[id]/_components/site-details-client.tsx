@@ -8,10 +8,13 @@ import Link from "next/link";
 import { StatisticsBlock } from "@/components/blocks/statistics-block";
 import { StatusBlock } from "@/components/blocks/status-block";
 import { cn } from "@/lib/utils";
-import { useSite } from "@/hooks/use-sites";
+import { useListings, useSite } from "@/hooks/use-sites";
 import { useParams } from "next/navigation";
 import SiteHeaderWidget from "./site-header-widget";
 import ListingAnalytics from "./listing-analytics";
+import { Loader2 } from "lucide-react";
+import { PageLayout } from "./page-layout";
+import { useTranslations } from "next-intl";
 
 interface SiteDetailsClientProps {
   id: string;
@@ -27,13 +30,16 @@ interface SiteDetailsClientProps {
     domain: string;
     images_folder: string;
     status: string;
+    view_listings: string;
   };
 }
 
 const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
   const { data: site, isLoading } = useSite(id);
+  const { data: listings, isLoading: isListingsLoading } = useListings(id);
   const params = useParams();
   const locale = params.locale as string;
+  const generalTranslations = useTranslations("General");
 
   if (isLoading) {
     return (
@@ -52,55 +58,9 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          asChild
-          className="h-8 px-3 bg-white dark:bg-slate-800"
-        >
-          <Link href={`/${locale}/sites`}>
-            <Icon icon="heroicons:arrow-left" className="w-3.5 h-3.5 mr-2" />
-            {t.back_to_sites}
-          </Link>
-        </Button>
-      </div>
-
+    <PageLayout site={site}>
       {/* New Header Widget */}
       <SiteHeaderWidget site={site} />
-
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatisticsBlock
-          title={t.total_listings}
-          total="7"
-          chartColor="#3b82f6"
-          series={[5, 10, 8, 15, 12, 20, 18, 25]}
-          className="border-none shadow-sm"
-        />
-        <StatisticsBlock
-          title={t.autogen_per_day}
-          total={`${site.autogenPerDay} / day`}
-          chartColor="#10b981"
-          series={[50, 40, 60, 45, 70, 55, 80, 75]}
-          className="border-none shadow-sm"
-        />
-        <StatusBlock
-          title={t.site_owner}
-          total={site.owner?.username || "N/A"}
-          icon={<Icon icon="heroicons:user-circle" className="w-6 h-6" />}
-          chartColor="#f59e0b"
-          className="border-none shadow-sm"
-        />
-        <StatusBlock
-          title={t.region}
-          total={site.region}
-          icon={<Icon icon="heroicons:map-pin" className="w-6 h-6" />}
-          chartColor="#8b5cf6"
-          className="border-none shadow-sm"
-        />
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Chart */}
@@ -123,7 +83,16 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
-              <DetailItem label={t.site_id} value={site.id} />
+              <DetailItem
+                label={t.total_listings}
+                value={
+                  isListingsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  ) : (
+                    listings?.length
+                  )
+                }
+              />
               <DetailItem
                 label={t.autogeneration}
                 value={
@@ -136,23 +105,15 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
                 }
               />
               <DetailItem
-                label={t.domain}
-                value={
-                  <Link
-                    href={`https://${site.domainName}`}
-                    target="_blank"
-                    className="text-primary hover:underline font-medium break-all"
-                  >
-                    {site.domainName}
-                  </Link>
-                }
+                label={t.autogen_per_day}
+                value={site.autogenPerDay}
               />
               <DetailItem
                 label={t.images_folder}
-                value={site.bucketName}
+                value={site.folder}
                 className="text-primary font-mono"
               />
-              <DetailItem
+              {/* <DetailItem
                 label={t.status}
                 value={
                   <Badge
@@ -162,12 +123,34 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
                     {site.status}
                   </Badge>
                 }
-              />
+              /> */}
+            </div>
+            <div className="mt-6">
+              <Button asChild className="w-full">
+                <Link href={`/${locale}/sites/${id}/listings`}>
+                  <Icon icon="heroicons:list-bullet" className="w-4 h-4 mr-2" />
+                  {t.view_listings}
+                </Link>
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
+      <div className="flex flex-col gap-2 text-xl text-default-900">
+        <div className="flex flex-col">
+          <h4 className="text-lg font-semibold">
+            {generalTranslations("description")}
+          </h4>
+          <p>{site.description}</p>
+        </div>
+        <div className="flex flex-col">
+          <h4 className="text-lg font-semibold">
+            {generalTranslations("description_en")}
+          </h4>
+          <p>{site.descriptionEn}</p>
+        </div>
+      </div>
+    </PageLayout>
   );
 };
 

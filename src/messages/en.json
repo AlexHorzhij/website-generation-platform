@@ -1,4 +1,19 @@
 {
+  "General": {
+    "description": "Description",
+    "description_en": "Description (English)",
+    "save": "Save",
+    "cancel": "Cancel",
+    "actions": "Actions",
+    "action_view": "View",
+    "action_delete": "Delete",
+    "status": "Status",
+    "region": "Region",
+    "id": "ID",
+    "title": "Title",
+    "title_en": "Title (English)",
+    "domain": "Domain"
+  },
   "Index": {
     "title": "Hello world!"
   },
@@ -273,7 +288,12 @@
     "listings": "Listings",
     "contacts": "Contacts",
     "domains": "Domains",
-    "prompts": "Prompts"
+    "prompts": "Prompts",
+    "back_to_sites": "Back to Sites",
+    "site_info": "Info",
+    "site_listings": "Listings",
+    "site_contacts": "Contacts",
+    "site_seo": "SEO"
   },
   "SitesManagement": {
     "title": "Sites Management",
@@ -314,5 +334,49 @@
     "autogeneration": "Autogeneration",
     "autogen_per_day": "Autogen per day",
     "region": "Region"
+  },
+  "Listings": {
+    "title": "Site Listings",
+    "view_listings": "View Listings",
+    "table_title": "Title",
+    "table_price": "Price",
+    "table_category": "Category",
+    "table_status": "Status",
+    "table_views": "Views",
+    "table_date": "Created Date",
+    "stats_total": "Total Listings",
+    "stats_autogeneration": "Autogeneration",
+    "stats_autogen_per_day": "Autogen per day",
+    "stats_images_folder": "Images Folder",
+    "stats_total_listings": "Total Listings",
+    "actions": "Actions",
+    "action_view": "View",
+    "action_delete": "Delete",
+    "details_title": "Listing Information",
+    "field_id": "ID",
+    "field_title": "Title",
+    "field_description": "Description",
+    "field_price": "Price",
+    "field_status": "Status",
+    "field_created": "Created At",
+    "field_views": "Views Count",
+    "field_username": "Username",
+    "field_site": "Site Name",
+    "field_category": "Category",
+    "field_region": "Region",
+    "field_contact": "Contact",
+    "field_theme": "Theme ID",
+    "field_images": "Images",
+    "field_no_images": "No images available",
+    "create_listing": "Create Listing",
+    "save": "Save",
+    "cancel": "Cancel",
+    "field_title_en": "Title (English)",
+    "field_category_id": "Category ID",
+    "field_theme_id": "Theme ID",
+    "field_images_folder": "Images Folder",
+    "select_folder": "Select Folder",
+    "performance_title": "Listings Performance",
+    "total_in_period": "total in selected period"
   }
 }

@@ -49,6 +49,7 @@ export interface Site {
   status: string;
   awsRegion?: string;
   bucketName?: string;
+  folder?: string;
   currency?: string;
   language?: string;
   categories?: string;
@@ -57,5 +58,45 @@ export interface Site {
   seoTitle?: string;
   seoDescription?: string;
   h1?: string;
+  ownerName: string;
   owner?: SiteOwner;
 }
+
+// {
+//   "id": 0,
+//   "domainName": "string",
+//   "marketplaceName": "string",
+//   "description": "string",
+//   "marketplaceNameEn": "string",
+//   "descriptionEn": "string",
+//   "apiKey": "string",
+//   "region": "string",
+//   "subregions": "string",
+//   "themeId": 0,
+//   "ownerId": 0,
+//   "ownerName": "string",
+//   "status": "string",
+//   "awsRegion": "string",
+//   "bucketName": "string",
+//   "currency": "string",
+//   "language": "string",
+//   "categories": "string",
+//   "autogeneration": true,
+//   "autogenPerDay": 0,
+//   "seoTitle": "string",
+//   "seoDescription": "string",
+//   "h1": "string"
+// }
+
+// {
+//   "id": 123,
+//   "title": "iPhone 13 Pro Max",
+//   "description": "Excellent condition iPhone 13 Pro Max",
+//   "price": 999.99,
+//   "status": "ACTIVE",
+//   "createdAt": "2024-01-15T10:30:00",
+//   "viewsCount": 150,
+//   "categoryName": "Electronics",
+//   "imagePaths": "image1.jpg,image2.jpg",
+//   "titleEn": "iPhone 13 Pro Max - Like New"
+// }
