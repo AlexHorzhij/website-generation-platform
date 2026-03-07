@@ -18,9 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { UserService } from "@/services/user-service";
+import { UserService } from "@/api/services/user-service";
 import { useQueryClient } from "@tanstack/react-query";
-import { userKeys } from "@/hooks/use-users";
+import { userKeys } from "@/api/hooks/use-users";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { SiteService } from "@/services/site-service";
+import { SiteService } from "@/api/services/site-service";
+import { ImageService } from "@/api/services/image-service";
 
 export const siteKeys = {
   all: ["sites"] as const,
@@ -24,18 +25,10 @@ export function useSite(id: number) {
   });
 }
 
-export function useListings(siteId: number) {
+export function useRegions(siteId: number) {
   return useQuery({
-    queryKey: [...siteKeys.all, "listings", siteId],
-    queryFn: () => SiteService.getListingsBySiteId(siteId),
-    enabled: !!siteId,
-  });
-}
-
-export function useFolders(siteId: number) {
-  return useQuery({
-    queryKey: siteKeys.folders(siteId),
-    queryFn: () => SiteService.getFolders(siteId),
+    queryKey: ["regions", siteId],
+    queryFn: () => SiteService.getRegions(siteId),
     enabled: !!siteId,
   });
 }

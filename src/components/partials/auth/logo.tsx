@@ -14,6 +14,8 @@ const Logo = () => {
         width={300}
         height={300}
         className=" w-36 "
+        style={{ height: "auto" }}
+        priority
       />
     </div>
   );

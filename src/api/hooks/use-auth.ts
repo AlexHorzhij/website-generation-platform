@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { authService } from "@/services/auth.service";
-import { LoginData, RegisterData } from "@/types/auth";
+import { authService } from "@/api/services/auth.service";
+import { LoginData, RegisterData } from "@/api/types/auth";
 import { useRouter } from "@/components/navigation";
 import { toast } from "sonner";
 import Cookies from "js-cookie";

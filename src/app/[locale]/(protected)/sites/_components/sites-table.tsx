@@ -19,11 +19,10 @@ import {
   Eye,
   Trash2,
   ExternalLink,
-  ChevronLeft,
-  ChevronRight,
   Search,
   Loader2,
 } from "lucide-react";
+import { TablePagination } from "@/components/ui-kit/table/table-pagination";
 
 import {
   Table,
@@ -39,13 +38,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Site } from "@/types/site";
+import { Site } from "@/api/types/site";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TableActions } from "@/components/ui-kit/table/table-actions";
 
-import { useSites } from "@/hooks/use-sites";
+import { useSites } from "@/api/hooks/use-sites";
+import { useTranslations } from "next-intl";
 
 interface SitesTableProps {
   translations: {
@@ -63,11 +63,14 @@ interface SitesTableProps {
   };
 }
 
-export function SitesTable({ translations }: SitesTableProps) {
+export function SitesTable() {
   const { data = [], isLoading } = useSites();
+  console.log("data SITES", data);
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+
+  const t = useTranslations("SitesManagement");
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -80,7 +83,19 @@ export function SitesTable({ translations }: SitesTableProps) {
     pageIndex: 0,
     pageSize: 10,
   });
-
+  const translations = {
+    site_name: t("table_site_name"),
+    domain: t("table_domain"),
+    folder: t("table_images_folder"),
+    region: t("table_region"),
+    owner: t("table_owner"),
+    status: t("table_status"),
+    actions: t("table_actions"),
+    action_view: t("action_view"),
+    action_delete: t("action_delete"),
+    filter_placeholder: t("filter_placeholder"),
+    items_selected: t("items_selected"),
+  };
   const columns: ColumnDef<Site>[] = [
     {
       id: "select",
@@ -118,11 +133,11 @@ export function SitesTable({ translations }: SitesTableProps) {
     },
     {
       id: "siteNameCol",
-      accessorKey: "domainName",
+      accessorKey: "marketplaceName",
       header: translations.site_name.toUpperCase(),
       cell: ({ row }) => (
         <div className="font-bold text-default-900 whitespace-nowrap lowercase">
-          {row.getValue("domainName")}
+          {row.original.marketplaceName}
         </div>
       ),
     },
@@ -150,24 +165,24 @@ export function SitesTable({ translations }: SitesTableProps) {
     },
     {
       accessorKey: "domainName",
-      header: translations.domain.toUpperCase(),
+      header: translations.domain,
       cell: ({ row }) => (
         <Link
           href={`https://${row.original.domainName}`}
           target="_blank"
-          className="text-default-600 hover:text-primary transition-colors whitespace-nowrap"
+          className="text-default-600 hover:text-primary hover:underline transition-colors whitespace-nowrap lowercase"
           onClick={(e) => e.stopPropagation()}
         >
-          {row.original.domainName}
+          {row.original.domainName.toLowerCase()}
         </Link>
       ),
     },
     {
-      accessorKey: "bucketName",
+      accessorKey: "folderName",
       header: translations.folder.toUpperCase(),
       cell: ({ row }) => (
         <div className="text-default-500 whitespace-nowrap">
-          {row.getValue("bucketName")}
+          {row.original.folder}
         </div>
       ),
     },
@@ -240,7 +255,7 @@ export function SitesTable({ translations }: SitesTableProps) {
     <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
       <CardHeader className="flex flex-row items-center justify-between py-6 px-6 bg-white dark:bg-slate-900">
         <CardTitle className="text-xl font-bold text-default-900">
-          {translations.site_name} Records
+          {translations.site_name}
         </CardTitle>
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -314,54 +329,8 @@ export function SitesTable({ translations }: SitesTableProps) {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between px-6 py-6 bg-white dark:bg-slate-900">
-          <div className="text-[13px] text-default-500 font-medium">
-            {table.getFilteredSelectedRowModel().rows.length}{" "}
-            {translations.items_selected}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="outline"
-              size="icon"
-              className="w-8 h-8 rounded-md border-default-200 bg-white dark:bg-slate-800"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: table.getPageCount() }, (_, i) => (
-                <Button
-                  key={i}
-                  variant={
-                    table.getState().pagination.pageIndex === i
-                      ? "default"
-                      : "outline"
-                  }
-                  className={cn(
-                    "w-8 h-8 rounded-md text-xs p-0 border-default-200 transition-all",
-                    table.getState().pagination.pageIndex === i
-                      ? "bg-default-900 text-white font-bold hover:bg-default-800"
-                      : "bg-white dark:bg-slate-800 text-default-600 hover:bg-default-50",
-                  )}
-                  onClick={() => table.setPageIndex(i)}
-                >
-                  {i + 1}
-                </Button>
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="w-8 h-8 rounded-md border-default-200 bg-white dark:bg-slate-800"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="border-t border-default-100">
+          <TablePagination table={table} totalItems={data.length} />
         </div>
       </CardContent>
     </Card>

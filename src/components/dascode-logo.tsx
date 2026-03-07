@@ -1,9 +1,15 @@
-import React from "react";
-import Image from "next/image";
-type IconProps = React.HTMLAttributes<SVGElement>;
-const DashCodeLogo = (props: IconProps) => {
+import Image, { ImageProps } from "next/image";
+
+const DashCodeLogo = (props: Partial<ImageProps>) => {
   return (
-    <Image src="/images/logo/logo-1.png" alt="logo" width={32} height={32} />
+    <Image
+      src="/images/logo/logo-1.png"
+      alt="logo"
+      width={32}
+      height={32}
+      priority
+      {...props}
+    />
   );
 };
 

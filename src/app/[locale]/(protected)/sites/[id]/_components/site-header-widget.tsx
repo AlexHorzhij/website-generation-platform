@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Site } from "@/types/site";
+import { Site } from "@/api/types/site";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
@@ -17,12 +17,14 @@ const InfoBlock = ({
   title,
   text,
   label,
+  className,
 }: {
   title: string;
   text: string;
   label?: React.ReactNode;
+  className?: string;
 }) => (
-  <div className="p-6 flex flex-col justify-center">
+  <div className={cn("p-6 flex flex-col justify-center", className)}>
     <p className="text-xs font-bold text-default-500 uppercase tracking-tight mb-1">
       {title}
     </p>
@@ -92,8 +94,16 @@ const SiteHeaderWidget = ({ site, className }: SiteHeaderWidgetProps) => {
               title={`${t("region")} / Language`}
               text={`${site.region} / ${site.language}`}
             />
-            <InfoBlock title="Currency" text={site.currency || "N/A"} />
-            <InfoBlock title="Language" text={`${site.language}`} />
+            <InfoBlock
+              title="Currency"
+              text={site.currency || "N/A"}
+              className="uppercase"
+            />
+            <InfoBlock
+              title="Language"
+              text={`${site.language}`}
+              className="uppercase"
+            />
           </div>
         </div>
       </CardContent>

@@ -12,7 +12,7 @@ const HeaderLogo = () => {
 
   return config.layout === "horizontal" ? (
     <Link href="/" className="flex gap-2 items-center    ">
-      <DashCodeLogo className="text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
+      <DashCodeLogo className="text-default-900" />
       <h1 className="text-xl font-semibold text-default-900 lg:block hidden ">
         GoMarketPlatform
       </h1>
@@ -20,7 +20,7 @@ const HeaderLogo = () => {
   ) : (
     !isDesktop && (
       <Link href="/" className="flex gap-2 items-center    ">
-        <DashCodeLogo className="text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
+        <DashCodeLogo className="text-default-900" />
         <h1 className="text-xl font-semibold text-default-900 lg:block hidden ">
           GoMarketPlatform
         </h1>

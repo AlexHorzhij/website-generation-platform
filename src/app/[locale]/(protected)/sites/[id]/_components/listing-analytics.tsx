@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useListings } from "@/hooks/use-sites";
+import { useListings } from "@/api/hooks/use-listings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import dynamic from "next/dynamic";
@@ -24,7 +24,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTranslations } from "next-intl";
 
 interface ListingAnalyticsProps {
-  siteId: string;
+  siteId: number;
 }
 
 type Period = "1w" | "1m" | "1q" | "1y";

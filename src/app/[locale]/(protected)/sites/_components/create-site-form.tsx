@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import {
+  createSiteFormSchema,
+  type SiteFormValues,
+} from "@/lib/validations/site";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,40 +20,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SiteService } from "@/services/site-service";
+import { SiteService } from "@/api/services/site-service";
 import { useRouter } from "@/components/navigation";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Wand2 } from "lucide-react";
-
-const formSchema = z.object({
-  domainName: z.string().min(3, "Domain name is required"),
-  siteName: z.string().min(2, "Site name is required"),
-  region: z.string().min(2, "Region is required"),
-  themeId: z.coerce.number().int().min(1, "Theme is required"),
-  currency: z.string().min(2, "Currency is required"),
-  description: z
-    .string()
-    .min(10, "Description should be at least 10 characters"),
-  categories: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Category name is required"),
-        description: z.string().min(1, "Category description is required"),
-      }),
-    )
-    .min(1, "At least one category is required"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { Loader2, Plus, Trash2, Wand2, Sparkles, Pencil } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { CategoryEditDialog } from "./category-edit-dialog";
 
 export const CreateSiteForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [aiCategories, setAiCategories] = useState<
+    { name: string; description: string }[]
+  >([]);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SiteFormValues>({
+    resolver: zodResolver(createSiteFormSchema),
     defaultValues: {
       domainName: "",
       siteName: "",
@@ -58,21 +47,23 @@ export const CreateSiteForm = () => {
       themeId: 1,
       currency: "UAH",
       description: "",
-      categories: [{ name: "", description: "" }],
+      categories: [],
     },
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, prepend, remove, update } = useFieldArray({
     control: form.control,
     name: "categories",
   });
-
-  const onSubmit = async (values: FormValues) => {
+  console.log("form", fields);
+  const onSubmit = async (values: SiteFormValues) => {
     setIsSubmitting(true);
+    console.log("values", values);
     try {
-      await SiteService.createSite(values);
+      const site = await SiteService.createSite(values);
+      console.log("site", site);
       toast.success("Site created successfully!");
-      router.push("/sites");
+      router.push(`/sites/${site.id}`);
     } catch (error) {
       toast.error("Failed to create site");
       console.error(error);
@@ -81,16 +72,20 @@ export const CreateSiteForm = () => {
     }
   };
 
-  const handleGenerateCategories = async () => {
-    const siteName = form.getValues("siteName");
-    const description = form.getValues("description");
-    const region = form.getValues("region");
+  const onAddManually = () => {
+    form.setValue("draftCategory", { name: "", description: "" });
+    setEditingIndex(-1);
+  };
 
-    if (!siteName || !description) {
+  const handleGenerateCategories = async () => {
+    const isValid = await form.trigger(["siteName", "description"]);
+
+    if (!isValid) {
       toast.error("Please fill in site name and description first");
       return;
     }
 
+    const { siteName, description, region } = form.getValues();
     setIsGenerating(true);
     try {
       const generated = await SiteService.generateCategories({
@@ -101,7 +96,7 @@ export const CreateSiteForm = () => {
       });
 
       if (generated && generated.length > 0) {
-        replace(generated);
+        setAiCategories(generated);
         toast.success("Categories generated successfully!");
       }
     } catch (error) {
@@ -110,6 +105,14 @@ export const CreateSiteForm = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSelectCategory = (
+    category: { name: string; description: string },
+    index: number,
+  ) => {
+    prepend(category);
+    setAiCategories((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -210,76 +213,113 @@ export const CreateSiteForm = () => {
                 )}
               />
 
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium">Categories</h3>
+                  <div>
+                    <h3 className="text-lg font-semibold tracking-tight">
+                      Selected Categories
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Add categories manually or select from suggestions.
+                    </p>
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => append({ name: "", description: "" })}
+                    className="h-8 gap-1"
+                    onClick={onAddManually}
                   >
-                    <Plus className="w-4 h-4 mr-2" /> Add Category
+                    <Plus className="w-3.5 h-3.5" /> Add Manually
                   </Button>
                 </div>
 
-                <div className="space-y-4">
-                  {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="flex gap-4 items-start p-4 border rounded-lg bg-default-50"
-                    >
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name={`categories.${index}.name`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs">Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Electronics" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name={`categories.${index}.description`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs">
-                                Description
-                              </FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Gadgets and devices"
-                                  className="min-h-[60px]"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="mt-6 text-destructive"
-                        onClick={() => remove(index)}
-                        disabled={fields.length === 1}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 gap-4">
+                  <AnimatePresence mode="popLayout">
+                    {fields.map((field, index) => {
+                      const categoryName = form.watch(
+                        `categories.${index}.name`,
+                      );
+                      const categoryDesc = form.watch(
+                        `categories.${index}.description`,
+                      );
+
+                      return (
+                        <motion.div
+                          key={field.id}
+                          initial={{ opacity: 0, x: -20, filter: "blur(10px)" }}
+                          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                          exit={{
+                            opacity: 0,
+                            scale: 0.95,
+                            filter: "blur(10px)",
+                          }}
+                          layout
+                          className="group relative bg-card border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300"
+                        >
+                          <div className="p-4 flex items-center gap-4">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-sm truncate">
+                                {categoryName || "Untitled Category"}
+                              </h4>
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                {categoryDesc || "No description provided"}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all"
+                                onClick={() => {
+                                  form.setValue("draftCategory", {
+                                    name: categoryName,
+                                    description: categoryDesc,
+                                  });
+                                  setEditingIndex(index);
+                                }}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-full transition-all"
+                                onClick={() => remove(index)}
+                                disabled={fields.length === 0}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="absolute left-0 bottom-0 top-0 w-1 bg-primary/20 group-hover:bg-primary transition-colors" />
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
                 </div>
-                <FormMessage>
-                  {form.formState.errors.categories?.message}
-                </FormMessage>
+
+                <CategoryEditDialog
+                  open={editingIndex !== null}
+                  onOpenChange={(open) => !open && setEditingIndex(null)}
+                  onSave={() => {
+                    const values = form.getValues("draftCategory");
+                    if (values && editingIndex !== null) {
+                      if (editingIndex === -1) {
+                        prepend(values);
+                      } else {
+                        update(editingIndex, values);
+                      }
+                    }
+                    setEditingIndex(null);
+                  }}
+                />
               </div>
+              <FormMessage>
+                {form.formState.errors.categories?.message}
+              </FormMessage>
 
               <div className="flex justify-end gap-4">
                 <Button
@@ -303,47 +343,103 @@ export const CreateSiteForm = () => {
       </Card>
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wand2 className="w-5 h-5 text-primary" />
+        <Card className="overflow-hidden border-primary/10 shadow-lg">
+          <CardHeader className="bg-primary/5 border-b border-primary/10">
+            <CardTitle className="flex items-center gap-2 text-primary font-bold">
+              <div className="p-1 bg-primary rounded-md">
+                <Wand2 className="w-4 h-4 text-primary-foreground" />
+              </div>
               AI Category Generator
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-default-500">
-              Fill in the site name and description, then use this tool to
-              automatically generate relevant categories.
+          <CardContent className="pt-6 space-y-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Describe your marketplace and let AI suggest relevant categories
+              for you.
             </p>
             <div className="space-y-2">
-              <Label>Custom Prompt (Optional)</Label>
+              <Label className="text-xs font-bold uppercase text-muted-foreground/70">
+                Custom Prompt (Optional)
+              </Label>
               <Textarea
                 placeholder="e.g. Focus on high-end fashion and luxury accessories..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                rows={7}
-                className="text-sm"
+                rows={5}
+                className="text-sm border-muted-foreground/20 focus:border-primary transition-all resize-none"
               />
             </div>
             <Button
-              className="w-full"
+              className="w-full shadow-md hover:shadow-lg transition-all group"
               onClick={handleGenerateCategories}
               disabled={isGenerating}
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating...
+                  Analyzing...
                 </>
               ) : (
                 <>
-                  <Wand2 className="w-4 h-4 mr-2" />
-                  Generate Categories
+                  <Sparkles className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                  Generate Suggestions
                 </>
               )}
             </Button>
           </CardContent>
         </Card>
+
+        <AnimatePresence>
+          {aiCategories.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <div className="flex items-center justify-between px-1">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Suggestions
+                </h4>
+                <Badge
+                  color="primary"
+                  className="text-[10px] font-medium bg-primary/5 text-primary border-primary/20"
+                >
+                  {aiCategories.length} available
+                </Badge>
+              </div>
+              <div className="grid gap-3">
+                {aiCategories.map((cat, index) => (
+                  <motion.div
+                    key={`${cat.name}-${index}`}
+                    layout
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleSelectCategory(cat, index)}
+                    className="p-3 border rounded-xl bg-card hover:border-primary/40 cursor-pointer shadow-sm hover:shadow-md group transition-all relative overflow-hidden"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-sm group-hover:text-primary transition-colors">
+                          {cat.name}
+                        </h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {cat.description}
+                        </p>
+                      </div>
+                      <div className="ml-2 mt-1 shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+                        <div className="p-1 bg-primary/10 rounded-full">
+                          <Plus className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

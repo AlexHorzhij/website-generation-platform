@@ -1,53 +1,32 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
-import Link from "next/link";
-import { StatisticsBlock } from "@/components/blocks/statistics-block";
-import { StatusBlock } from "@/components/blocks/status-block";
 import { cn } from "@/lib/utils";
-import { useListings, useSite } from "@/hooks/use-sites";
-import { useParams } from "next/navigation";
 import SiteHeaderWidget from "./site-header-widget";
 import ListingAnalytics from "./listing-analytics";
 import { Loader2 } from "lucide-react";
-import { PageLayout } from "./page-layout";
-import { useTranslations } from "next-intl";
+import { Site } from "@/api/types/site";
+import { ListingService } from "@/api/services/listing-service";
+import { getTranslations } from "next-intl/server";
 
 interface SiteDetailsClientProps {
-  id: string;
-  translations: {
-    back_to_sites: string;
-    total_listings: string;
-    autogen_per_day: string;
-    site_owner: string;
-    region: string;
-    site_details: string;
-    site_id: string;
-    autogeneration: string;
-    domain: string;
-    images_folder: string;
-    status: string;
-    view_listings: string;
-  };
+  site: Site;
 }
 
-const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
-  const { data: site, isLoading } = useSite(id);
-  const { data: listings, isLoading: isListingsLoading } = useListings(id);
-  const params = useParams();
-  const locale = params.locale as string;
-  const generalTranslations = useTranslations("General");
+const SiteDetailsClient = async ({ site }: SiteDetailsClientProps) => {
+  // const { data: listings, isLoading: isListingsLoading } = useListings(
+  //   Number(site.id),
+  // );
+  const listings = await ListingService.getListingsBySiteId(Number(site.id));
+  const t = await getTranslations("SiteDetails");
 
-  if (isLoading) {
-    return (
-      <div className="p-8 text-center text-default-500 font-medium">
-        Loading site details...
-      </div>
-    );
-  }
+  // if (isListingsLoading) {
+  //   return (
+  //     <div className="p-8 text-center text-default-500 font-medium">
+  //       Loading site details...
+  //     </div>
+  //   );
+  // }
 
   if (!site) {
     return (
@@ -58,14 +37,14 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
   }
 
   return (
-    <PageLayout site={site}>
+    <>
+      {" "}
       {/* New Header Widget */}
       <SiteHeaderWidget site={site} />
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Chart */}
         <div className="lg:col-span-2">
-          <ListingAnalytics siteId={id} />
+          <ListingAnalytics siteId={Number(site.id)} />
         </div>
 
         {/* Technical Details */}
@@ -77,24 +56,18 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
                 className="w-5 h-5 text-primary"
               />
               <CardTitle className="text-base font-bold text-default-800">
-                {t.site_details}
+                {t("site_details")}
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
               <DetailItem
-                label={t.total_listings}
-                value={
-                  isListingsLoading ? (
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  ) : (
-                    listings?.length
-                  )
-                }
+                label={t("total_listings")}
+                value={listings?.length}
               />
               <DetailItem
-                label={t.autogeneration}
+                label={t("autogeneration")}
                 value={
                   <Badge
                     color={site.autogeneration ? "default" : "secondary"}
@@ -105,52 +78,19 @@ const SiteDetailsClient = ({ id, translations: t }: SiteDetailsClientProps) => {
                 }
               />
               <DetailItem
-                label={t.autogen_per_day}
+                label={t("autogen_per_day")}
                 value={site.autogenPerDay}
               />
               <DetailItem
-                label={t.images_folder}
+                label={t("images_folder")}
                 value={site.folder}
                 className="text-primary font-mono"
               />
-              {/* <DetailItem
-                label={t.status}
-                value={
-                  <Badge
-                    color={site.status === "live" ? "success" : "warning"}
-                    className="px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all"
-                  >
-                    {site.status}
-                  </Badge>
-                }
-              /> */}
-            </div>
-            <div className="mt-6">
-              <Button asChild className="w-full">
-                <Link href={`/${locale}/sites/${id}/listings`}>
-                  <Icon icon="heroicons:list-bullet" className="w-4 h-4 mr-2" />
-                  {t.view_listings}
-                </Link>
-              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
-      <div className="flex flex-col gap-2 text-xl text-default-900">
-        <div className="flex flex-col">
-          <h4 className="text-lg font-semibold">
-            {generalTranslations("description")}
-          </h4>
-          <p>{site.description}</p>
-        </div>
-        <div className="flex flex-col">
-          <h4 className="text-lg font-semibold">
-            {generalTranslations("description_en")}
-          </h4>
-          <p>{site.descriptionEn}</p>
-        </div>
-      </div>
-    </PageLayout>
+    </>
   );
 };
 

@@ -9,15 +9,15 @@ import { MenuDragAble } from "./menu-dragable";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function Menu() {
-  const [config, setConfig] = useConfig();
+  // const [config, setConfig] = useConfig();
 
-  if (config.sidebar === "draggable") {
-    return <MenuDragAble />;
-  }
+  // if (config.sidebar === "draggable") {
+  //   return <MenuDragAble />;
+  // }
 
-  if (config.sidebar === "two-column") {
-    return <MenuTwoColumn />;
-  }
+  // if (config.sidebar === "two-column") {
+  //   return <MenuTwoColumn />;
+  // }
 
   return <MenuClassic />;
 }

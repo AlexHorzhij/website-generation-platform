@@ -27,6 +27,17 @@ export interface CreateSiteRequest {
   categories: Category[];
 }
 
+export interface UpdateSiteRequest {
+  siteName: string;
+  description: string;
+  siteNameEn: string;
+  descriptionEn: string;
+  currency: string;
+  seoTitle: string;
+  seoDescription: string;
+  h1: string;
+}
+
 export interface CategoryGenerationRequest {
   siteName: string;
   description: string;
@@ -60,6 +71,19 @@ export interface Site {
   h1?: string;
   ownerName: string;
   owner?: SiteOwner;
+}
+
+export interface Region {
+  id: number;
+  name: string;
+  nameEn: string;
+  code: string;
+  siteId: number;
+  parentId: number;
+  isParent: boolean;
+  parentName: string;
+  childrenCount: number;
+  listingsCount: number;
 }
 
 // {

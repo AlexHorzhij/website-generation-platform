@@ -1,6 +1,6 @@
 "use client";
 
-import { useUsers } from "@/hooks/use-users";
+import { useUsers } from "@/api/hooks/use-users";
 import {
   Table,
   TableBody,
@@ -14,9 +14,17 @@ import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { UserActions } from "./user-actions";
+import { PageLayout } from "@/components/layouts/page-layout";
+import { ActionBtn } from "@/components/ui-kit/table/action-btn";
+import { useTranslations } from "next-intl";
+
+import { useState } from "react";
+import { CreateUserDialog } from "./create-user-dialog";
 
 const UsersClient = () => {
   const { data: users, isLoading, error } = useUsers();
+  const t = useTranslations();
+  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -35,11 +43,16 @@ const UsersClient = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-default-900">Users</h2>
-      </div>
-
+    <PageLayout
+      title="Users"
+      actionBlock={
+        <ActionBtn
+          text={t("Menu.action_add_user")}
+          onClick={() => setIsOpen(true)}
+        />
+      }
+    >
+      <CreateUserDialog open={isOpen} onOpenChange={setIsOpen} />
       <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -100,7 +113,7 @@ const UsersClient = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </PageLayout>
   );
 };
 

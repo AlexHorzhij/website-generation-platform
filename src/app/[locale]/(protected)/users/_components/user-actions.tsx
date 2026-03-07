@@ -28,11 +28,11 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Eye, Trash2, ShieldAlert } from "lucide-react";
-import { UserService } from "@/services/user-service";
+import { UserService } from "@/api/services/user-service";
 import { useQueryClient } from "@tanstack/react-query";
-import { userKeys } from "@/hooks/use-users";
+import { userKeys } from "@/api/hooks/use-users";
 import { toast } from "sonner";
-import { User } from "@/types/user";
+import { User } from "@/api/types/user";
 import { cn } from "@/lib/utils";
 
 interface UserActionsProps {
@@ -72,9 +72,8 @@ export const UserActions = ({ user }: UserActionsProps) => {
   const handleDeleteUser = async () => {
     setIsUpdating(true);
     try {
-      // Запит як у прикладі
-      await UserService.makeAdmin(user.id);
-      toast.success("Action executed");
+      await UserService.deleteUser(user.id);
+      toast.success("User deleted successfully");
       queryClient.invalidateQueries({ queryKey: userKeys.all });
     } catch (error) {
       toast.error("Action failed");
@@ -101,7 +100,13 @@ export const UserActions = ({ user }: UserActionsProps) => {
           {
             label: "Delete",
             icon: <Trash2 />,
-            onClick: () => setIsDeleteDialogOpen(true),
+            onClick: () => {
+              if (user.role === "ADMIN") {
+                toast.error("Admin user cannot be deleted");
+                return;
+              }
+              setIsDeleteDialogOpen(true);
+            },
             variant: "destructive",
           },
         ]}

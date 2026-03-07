@@ -1,12 +1,12 @@
-import apiClient from "@/lib/axios";
-import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
+import apiClient from "@/api/client";
+import { LoginData, RegisterData, AuthResponse } from "@/api/types/auth";
 import Cookies from "js-cookie";
 
 export const authService = {
   login: async (data: LoginData): Promise<AuthResponse> => {
     console.log("data", data);
     const response = await apiClient.post<AuthResponse>(
-      "/api/public/users/login",
+      "/public/users/login",
       data,
     );
     console.log("response", response);
@@ -14,7 +14,10 @@ export const authService = {
   },
 
   register: async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/register", data);
+    const response = await apiClient.post<AuthResponse>(
+      "/public/users/register",
+      data,
+    );
     return response.data;
   },
 

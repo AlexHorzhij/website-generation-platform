@@ -4,12 +4,15 @@ import axios, {
   AxiosError,
 } from "axios";
 import Cookies from "js-cookie";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const VERSION = process.env.NEXT_PUBLIC_API_VERSION || "v1";
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: `${BASE_URL.replace(/\/$/, "")}/${VERSION}`,
   headers: {
     "Content-Type": "application/json",
     "X-API-Key": "1111",
+    "X-API-Version": VERSION,
   },
 });
 
@@ -17,7 +20,6 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = Cookies.get("go_market_token");
-    console.log("go_market_token from cookies", token);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }

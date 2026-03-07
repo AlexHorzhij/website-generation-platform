@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "@/components/navigation";
-import { useRegister } from "@/hooks/use-auth";
+import { useRegister } from "@/api/hooks/use-auth";
 
 const schema = z
   .object({

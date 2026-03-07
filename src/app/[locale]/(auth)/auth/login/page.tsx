@@ -1,5 +1,4 @@
 import LoginForm from "@/components/partials/auth/login-form";
-import Social from "@/components/partials/auth/social";
 import Logo from "@/components/partials/auth/logo";
 import Copyright from "@/components/partials/auth/copyright";
 import { Link } from "@/i18n/routing";
@@ -18,11 +17,6 @@ interface LoginPageProps {
 const LoginPage = async ({ params }: LoginPageProps) => {
   return (
     <div className="flex justify-center w-full min-h-screen">
-      {/* <div>
-        <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
-          Welcome to <span className="text-primary-200">GoMarket</span>
-        </h1>
-      </div> */}
       <p className="absolute bottom-6 text-white/40 text-xs">
         <Copyright />
       </p>
@@ -40,18 +34,9 @@ const LoginPage = async ({ params }: LoginPageProps) => {
             <h2 className="text-2xl font-bold text-default-900">
               Sign in to your account
             </h2>
-            <p className="text-default-500 text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/auth/register"
-                className="text-primary font-medium hover:underline"
-              >
-                Create one
-              </Link>
-            </p>
           </div>
 
-          <Separator className="my-5" />
+          {/* <Separator className="my-5" /> */}
 
           {/* Login Form */}
           <LoginForm />

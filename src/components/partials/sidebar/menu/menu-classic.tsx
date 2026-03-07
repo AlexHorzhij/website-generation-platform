@@ -25,6 +25,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/i18n/routing";
+import GoBackBtn from "../common/go-back-btn";
 
 // Matches /sites/123, /sites/123/listings, etc. — but NOT /sites (list)
 const SITE_DETAIL_RE = /^\/sites\/(\d+)(\/.*)?$/;
@@ -79,45 +80,12 @@ export function MenuClassic({}) {
 
       {/* Back button when inside a site */}
       {isSiteContext && (!collapsed || hovered) && (
-        <div className="px-4 pt-2 pb-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-sm font-medium text-default-600 hover:text-default-900 gap-2 px-2"
-            asChild
-          >
-            <Link href="/sites">
-              <Icon
-                icon="heroicons-outline:arrow-left"
-                className="w-4 h-4 flex-shrink-0"
-              />
-              <span className="truncate">{t("back_to_sites")}</span>
-            </Link>
-          </Button>
-          <div className="mt-2 mb-1 h-px bg-default-100" />
-        </div>
+        <GoBackBtn text={t("go_back")} link="/sites" />
       )}
 
       {/* Collapsed-only back button */}
       {isSiteContext && collapsed && !hovered && isDesktop && (
-        <div className="flex justify-center px-2 pt-2 pb-1">
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
-                  <Link href="/sites">
-                    <Icon
-                      icon="heroicons-outline:arrow-left"
-                      className="w-5 h-5"
-                    />
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">{t("back_to_sites")}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <div className="mt-1 h-px bg-default-100 w-full" />
-        </div>
+        <GoBackBtn text={t("go_back")} link="/sites" collapsed />
       )}
 
       <nav className="mt-4 h-full w-full">

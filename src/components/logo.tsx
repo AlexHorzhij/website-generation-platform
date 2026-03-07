@@ -15,7 +15,7 @@ const Logo = () => {
   if (config.sidebar === "compact") {
     return (
       <Link href="/" className="flex gap-2 items-center   justify-center    ">
-        <DashCodeLogo className="  text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
+        <DashCodeLogo className="text-default-900" />
       </Link>
     );
   }
@@ -23,13 +23,14 @@ const Logo = () => {
 
   return (
     <Link href="/" className="flex gap-2 items-center    ">
-      <DashCodeLogo className="  text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
+      <DashCodeLogo className="text-default-900" />
       {(!config?.collapsed || hovered) && (
         <Image
           src="/images/logo/logo-text.png"
           alt="logo"
           width={140}
           height={32}
+          priority
         />
       )}
     </Link>

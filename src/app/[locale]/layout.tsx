@@ -7,10 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 // language
-import { getLangDir } from "rtl-detect";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import DirectionProvider from "@/providers/direction-provider";
 import QueryProvider from "@/providers/query-provider";
 
 export const metadata: Metadata = {
@@ -27,9 +25,8 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
   const messages = await getMessages();
-  const direction = getLangDir(locale);
   return (
-    <html lang={locale} dir={direction} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${inter.className} dashcode-app `}
         suppressHydrationWarning
@@ -42,11 +39,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <MountedProvider>
-              <QueryProvider>
-                <DirectionProvider direction={direction}>
-                  {children}
-                </DirectionProvider>
-              </QueryProvider>
+              <QueryProvider>{children}</QueryProvider>
             </MountedProvider>
             <Toaster />
             <SonnerToaster position="top-center" />

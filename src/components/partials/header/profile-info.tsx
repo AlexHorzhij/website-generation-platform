@@ -15,7 +15,7 @@ import {
 import { Icon } from "@/components/ui/icon";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { useMe, useLogout } from "@/hooks/use-auth";
+import { useMe, useLogout } from "@/api/hooks/use-auth";
 
 const ProfileInfo = () => {
   const { data: user } = useMe();

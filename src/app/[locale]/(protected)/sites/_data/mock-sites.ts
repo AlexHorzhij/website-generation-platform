@@ -1,4 +1,4 @@
-import { Site } from "@/types/site";
+import { Site } from "@/api/types/site";
 
 export const mockSites: Site[] = [
   {
@@ -11,6 +11,7 @@ export const mockSites: Site[] = [
     language: "Ukrainian",
     themeId: 1,
     ownerId: 1,
+    ownerName: "Admin",
     status: "live",
     autogeneration: false,
     autogenPerDay: 3000,
@@ -25,6 +26,7 @@ export const mockSites: Site[] = [
     language: "English",
     themeId: 1,
     ownerId: 2,
+    ownerName: "Tutor",
     status: "live",
     autogeneration: false,
     autogenPerDay: 3000,

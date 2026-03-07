@@ -1,9 +1,11 @@
-import { getTranslations } from "next-intl/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
-import { SiteService } from "@/services/site-service";
-import { siteKeys } from "@/hooks/use-sites";
+import { SiteService } from "@/api/services/site-service";
+import { siteKeys } from "@/api/hooks/use-sites";
 import SiteDetailsClient from "./_components/site-details-client";
+import { SiteDetailsPreview } from "../_components/site-details-preview";
+import { PageLayout } from "@/components/layouts/page-layout";
+import { EditSiteAction } from "./_components/edit-site-action";
+import { getTranslations } from "next-intl/server";
 
 interface SiteDetailsPageProps {
   params: Promise<{
@@ -14,36 +16,29 @@ interface SiteDetailsPageProps {
 
 const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
   const { id } = await params;
-  const t = await getTranslations("SiteDetails");
   const queryClient = getQueryClient();
+  const t = await getTranslations("General");
 
   // Prefetch data on the server
   await queryClient.prefetchQuery({
-    queryKey: siteKeys.detail(id),
+    queryKey: siteKeys.detail(Number(id)),
     queryFn: () => SiteService.getSiteById(Number(id)),
   });
 
-  const translations = {
-    back_to_sites: t("back_to_sites"),
-    total_listings: t("total_listings"),
-    autogen_per_day: t("autogen_per_day"),
-    site_owner: t("site_owner"),
-    region: t("region"),
-    site_details: t("site_details"),
-    site_id: t("site_id"),
-    autogeneration: t("autogeneration"),
-    domain: t("domain"),
-    images_folder: t("images_folder"),
-    status: t("status"),
-    view_listings: await getTranslations("Listings").then((lt) =>
-      lt("view_listings"),
-    ),
-  };
+  const site = await SiteService.getSiteById(Number(id));
+
+  if (!site) {
+    return <div>Site not found</div>;
+  }
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <SiteDetailsClient id={id} translations={translations} />
-    </HydrationBoundary>
+    <PageLayout
+      title={site.marketplaceName}
+      actionBlock={<EditSiteAction site={site} text={t("edit")} />}
+    >
+      <SiteDetailsClient site={site} />
+      <SiteDetailsPreview site={site} />
+    </PageLayout>
   );
 };
 

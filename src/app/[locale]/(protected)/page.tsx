@@ -7,8 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
+import { Card, CardContent } from "@/components/ui/card";
 
 const OverviewPage = async () => {
   const t = await getTranslations("DashboardStats");
@@ -21,22 +20,11 @@ const OverviewPage = async () => {
 
   return (
     <div className="space-y-6">
-      {/* <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Icon
-            icon="heroicons:globe-alt"
-            className="w-8 h-8 text-default-900"
-          /> */}
       <h2 className="text-2xl font-semibold text-default-900">
         System Statistics
       </h2>
-      {/* </div>
-      </div> */}
 
       <Card>
-        {/* <CardHeader>
-          <CardTitle>System Statistics</CardTitle>
-        </CardHeader> */}
         <CardContent className="p-0">
           <Table>
             <TableHeader>
