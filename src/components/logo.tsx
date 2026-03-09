@@ -31,6 +31,7 @@ const Logo = () => {
           width={140}
           height={32}
           priority
+          style={{ height: "auto" }}
         />
       )}
     </Link>
