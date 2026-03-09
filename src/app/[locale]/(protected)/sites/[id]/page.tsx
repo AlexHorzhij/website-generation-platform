@@ -20,12 +20,14 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
   const t = await getTranslations("General");
 
   // Prefetch data on the server
-  await queryClient.prefetchQuery({
-    queryKey: siteKeys.detail(Number(id)),
-    queryFn: () => SiteService.getSiteById(Number(id)),
-  });
+  // await queryClient.prefetchQuery({
+  //   queryKey: siteKeys.detail(Number(id)),
+  //   queryFn: () => SiteService.getSiteById(Number(id)),
+  // });
 
   const site = await SiteService.getSiteById(Number(id));
+  console.log(site);
+  const pageTitle = `${site?.marketplaceName} | ${site?.domainName}`;
 
   if (!site) {
     return <div>Site not found</div>;
@@ -33,7 +35,7 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
 
   return (
     <PageLayout
-      title={site.marketplaceName}
+      title={pageTitle}
       actionBlock={<EditSiteAction site={site} text={t("edit")} />}
     >
       <SiteDetailsClient site={site} />

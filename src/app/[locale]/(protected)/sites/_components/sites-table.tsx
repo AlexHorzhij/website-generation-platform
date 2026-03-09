@@ -14,14 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  MoreVertical,
-  Eye,
-  Trash2,
-  ExternalLink,
-  Search,
-  Loader2,
-} from "lucide-react";
+import { Eye, Trash2, Loader2 } from "lucide-react";
 import { TablePagination } from "@/components/ui-kit/table/table-pagination";
 
 import {
@@ -32,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -41,31 +33,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Site } from "@/api/types/site";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { TableActions } from "@/components/ui-kit/table/table-actions";
 
 import { useSites } from "@/api/hooks/use-sites";
 import { useTranslations } from "next-intl";
 
-interface SitesTableProps {
-  translations: {
-    site_name: string;
-    domain: string;
-    folder: string;
-    region: string;
-    owner: string;
-    status: string;
-    actions: string;
-    action_view: string;
-    action_delete: string;
-    filter_placeholder: string;
-    items_selected: string;
-  };
-}
-
 export function SitesTable() {
   const { data = [], isLoading } = useSites();
-  console.log("data SITES", data);
+  console.log("SITES", data);
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
@@ -90,6 +65,7 @@ export function SitesTable() {
     region: t("table_region"),
     owner: t("table_owner"),
     status: t("table_status"),
+    autogeneration: t("table_autogeneration"),
     actions: t("table_actions"),
     action_view: t("action_view"),
     action_delete: t("action_delete"),
@@ -183,6 +159,20 @@ export function SitesTable() {
       cell: ({ row }) => (
         <div className="text-default-500 whitespace-nowrap">
           {row.original.folder}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "autogeneration",
+      header: translations.autogeneration.toUpperCase(),
+      cell: ({ row }) => (
+        <div className="text-default-500 whitespace-nowrap">
+          <Badge
+            color={row.original.autogeneration ? "success" : "warning"}
+            className="capitalize rounded-full px-4 py-1 font-semibold text-[11px]"
+          >
+            {row.original.autogeneration ? "ON" : "OFF"}
+          </Badge>
         </div>
       ),
     },

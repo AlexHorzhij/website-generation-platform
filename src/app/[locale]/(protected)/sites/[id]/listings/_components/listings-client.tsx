@@ -266,9 +266,11 @@ export default function ListingsClient({ site }: ListingsClientProps) {
     getSortedRowModel: getSortedRowModel(),
   });
 
+  const PageTitle = site.marketplaceName + " | " + site.domainName;
+
   return (
     <PageLayout
-      title={site.marketplaceName}
+      title={PageTitle}
       actionBlock={
         <ActionBtn text={t("create_listing")} onClick={handleCreate} />
       }

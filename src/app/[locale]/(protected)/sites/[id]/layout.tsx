@@ -1,5 +1,7 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
+import { siteKeys } from "@/api/hooks/use-sites";
+import { SiteService } from "@/api/services/site-service";
 
 interface SiteLayoutProps {
   children: React.ReactNode;
@@ -15,6 +17,11 @@ export default async function SiteLayout({
 }: SiteLayoutProps) {
   const { id } = await params;
   const queryClient = getQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: siteKeys.detail(Number(id)),
+    queryFn: () => SiteService.getSiteById(Number(id)),
+  });
 
   // Prefetch listing metadata for all pages under /sites/[id]/*
   // await queryClient.prefetchQuery({

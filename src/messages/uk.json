@@ -308,7 +308,8 @@
     "go_back": "Повернутися",
     "action_back_to_list": "До списку",
     "action_add_user": "Додати користувача",
-    "select_region": "Виберіть регіон"
+    "select_region": "Виберіть регіон",
+    "axes": "Осі"
   },
   "SitesManagement": {
     "title": "Керування сайтами",
@@ -438,6 +439,38 @@
     "action_buy_domain": "Купити домен",
     "filter_placeholder": "Пошук домену...",
     "no_results": "Домени не знайдені."
+  },
+  "PromptsManagement": {
+    "title": "Керування промптами",
+    "table_id": "ID",
+    "table_appointment": "Призначення",
+    "table_status": "Статус",
+    "table_description": "Опис",
+    "table_actions": "Дії",
+    "action_view": "Переглянути",
+    "action_edit": "Редагувати",
+    "filter_placeholder": "Пошук промптів...",
+    "no_results": "Промпти не знайдені.",
+    "details_title": "Деталі промпта",
+    "field_appointment": "Призначення",
+    "field_description": "Опис",
+    "field_content": "Зміст промпта",
+    "field_lines": "Рядків",
+    "field_characters": "Символів",
+    "field_language": "Мова",
+    "field_site_domain": "Домен сайту",
+    "edit_prompt": "Редагувати промпт"
+  },
+  "AxesManagement": {
+    "title": "Керування осями",
+    "list_title": "Осі сайту",
+    "no_axes_found": "Координатних осей для цього сайту не знайдено.",
+    "add_axis": "Додати вісь",
+    "edit_axis": "Редагувати вісь",
+    "field_type": "Тип",
+    "field_content": "Вміст",
+    "action_view": "Переглянути",
+    "action_delete": "Видалити"
   },
   "BuyDomainDialog": {
     "buy_domain": "Купити домен",

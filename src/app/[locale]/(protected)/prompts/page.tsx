@@ -1,5 +1,11 @@
+import { PromptsTable } from "./_components/prompts-table";
+
 const PromptsPage = () => {
-  return <h1 className="text-2xl"> Prompts page Your Content goes here... </h1>;
+  return (
+    <div className="space-y-6">
+      <PromptsTable />
+    </div>
+  );
 };
 
 export default PromptsPage;

@@ -27,6 +27,8 @@ export function DomainDashboardClient({ data }: DomainDashboardClientProps) {
   const params = useParams();
   const locale = params.locale as string;
 
+  console.log("domain data tetails", data);
+
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-default-400">

@@ -15,7 +15,9 @@ interface DomainDetailPageProps {
 
 const DomainDetailPage = async ({ params }: DomainDetailPageProps) => {
   const { domainName } = await params;
-  const decoded = decodeURIComponent(domainName);
+  // const decoded = decodeURIComponent(domainName);
+  const decoded = "tutorscoach.com";
+  console.log("decoded", decoded);
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

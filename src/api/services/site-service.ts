@@ -7,6 +7,7 @@ import {
   UpdateSiteRequest,
 } from "@/api/types/site";
 import apiClient from "@/api/client";
+import { cache } from "react";
 
 export const SiteService = {
   async getSites(): Promise<Site[]> {
@@ -23,15 +24,16 @@ export const SiteService = {
     }
   },
 
-  async getSiteById(id: number): Promise<Site | undefined> {
+  getSiteById: cache(async (id: number): Promise<Site | null> => {
     try {
       const response = await apiClient.get<Site[]>(`/sites`);
-      const data = response.data.find((site) => Number(site.id) === Number(id));
-      return data;
+      const site = response.data.find((site) => site.id === id);
+      return site || null;
     } catch (error) {
       console.warn("Backend not available, using mock site data", error);
+      return null;
     }
-  },
+  }),
 
   async getRegions(siteId: number): Promise<Region[]> {
     try {
