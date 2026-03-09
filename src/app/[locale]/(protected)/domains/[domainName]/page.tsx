@@ -32,7 +32,7 @@ const DomainDetailPage = async ({ params }: DomainDetailPageProps) => {
   const pageTitle = `${t("mode_label")}:${data?.mode}`;
 
   return (
-    <PageLayout title={decoded} goBackLink="/sites" description={pageTitle}>
+    <PageLayout title={decoded} goBackLink="/domains" description={pageTitle}>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <DomainDashboardClient data={data} />
       </HydrationBoundary>
