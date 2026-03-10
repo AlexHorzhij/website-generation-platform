@@ -131,6 +131,14 @@ export function getSiteMenuList(
           submenus: [],
         },
         {
+          id: "site-images",
+          href: `${base}/images`,
+          label: t("site_images"),
+          active: pathname.startsWith(`${base}/images`),
+          icon: "heroicons-outline:image",
+          submenus: [],
+        },
+        {
           id: "site-prompts",
           href: `${base}/prompts`,
           label: t("prompts"),

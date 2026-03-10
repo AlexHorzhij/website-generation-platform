@@ -26,7 +26,6 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
   // });
 
   const site = await SiteService.getSiteById(Number(id));
-  console.log(site);
   const pageTitle = `${site?.marketplaceName} | ${site?.domainName}`;
 
   if (!site) {

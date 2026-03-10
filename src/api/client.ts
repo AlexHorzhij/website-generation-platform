@@ -3,8 +3,10 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
-import Cookies from "js-cookie";
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const BASE_URL =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+    : "/api";
 const VERSION = process.env.NEXT_PUBLIC_API_VERSION || "v1";
 
 let serverCookies: any;
@@ -17,22 +19,9 @@ if (typeof window === "undefined") {
   }
 }
 
-const getCookie = async (name: string) => {
-  if (typeof window === "undefined" && serverCookies) {
-    try {
-      // У Next.js 15+ cookies() повертає проміс
-      const cookieStore = await serverCookies();
-      return cookieStore.get(name)?.value;
-    } catch (e) {
-      // Якщо виклик стався на сервері, але не в контексті запиту
-      return undefined;
-    }
-  }
-  return Cookies.get(name);
-};
-
 const apiClient = axios.create({
   baseURL: `${BASE_URL.replace(/\/$/, "")}/${VERSION}`,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     "X-API-Key": "1111",
@@ -40,14 +29,22 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor for adding auth token
+// Request interceptor for handle cookies & headers
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const token = await getCookie("go_market_token");
-    console.log("Token", token);
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Forward cookies on the server side (Next.js server components/actions)
+    if (typeof window === "undefined" && serverCookies) {
+      try {
+        const cookieStore = await serverCookies();
+        const allCookies = cookieStore.toString();
+        if (allCookies && config.headers) {
+          config.headers.Cookie = allCookies;
+        }
+      } catch (error) {
+        // Silently ignore if cookies cannot be accessed
+      }
     }
+
     return config;
   },
   (error: AxiosError) => {
@@ -59,12 +56,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
-    // console.log("error", error);
-    // if (error.response?.status === 401) {
-    //   Cookies.remove("go_market_token");
-    //   localStorage.removeItem("user");
-    //   window.location.href = "/auth/login";
-    // }
+    console.log("error", error);
+    if (error.response?.status === 401) {
+      // Cookies.remove("JSESSIONID");
+      localStorage.removeItem("user");
+      window.location.href = "/auth/login";
+    }
     return Promise.reject(error);
   },
 );

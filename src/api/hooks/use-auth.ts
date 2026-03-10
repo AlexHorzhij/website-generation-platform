@@ -11,7 +11,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (data: LoginData) => authService.login(data),
     onSuccess: (data) => {
-      Cookies.set("go_market_token", data.sessionId, { expires: 7, path: "/" });
+      Cookies.set("JSESSIONID", data.sessionId, { expires: 7, path: "/" });
       toast.success("Successfully logged in");
       router.push("/");
     },
@@ -30,7 +30,7 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: (data: RegisterData) => authService.register(data),
     onSuccess: (data) => {
-      Cookies.set("go_market_token", data.sessionId, { expires: 7, path: "/" });
+      Cookies.set("JSESSIONID", data.sessionId, { expires: 7, path: "/" });
       toast.success("Registration successful");
       router.push("/");
     },

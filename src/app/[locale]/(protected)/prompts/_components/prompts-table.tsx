@@ -44,6 +44,8 @@ export function PromptsTable({ siteId }: PromptsTableProps) {
   const { data: sitePrompts = [], isLoading: isSiteLoading } = useSitePrompts(
     siteId as number,
   );
+  console.log("sitePrompts", sitePrompts);
+  // const [data: sitePrompts] = useSitePrompts(siteId as number);
 
   const data = siteId ? sitePrompts : allPrompts;
   const isLoading = siteId ? isSiteLoading : isAllLoading;
@@ -131,9 +133,7 @@ export function PromptsTable({ siteId }: PromptsTableProps) {
             icon: <Eye className="w-4 h-4" />,
             onClick: () => {
               if (siteId) {
-                // If we're in site context, viewing a prompt might just be the same view,
-                // but usually we want to go back to site context.
-                router.push(`/${locale}/prompts/${id}`);
+                router.push(`/${locale}/sites/${siteId}/prompts/${id}`);
               } else {
                 router.push(`/${locale}/prompts/${id}`);
               }

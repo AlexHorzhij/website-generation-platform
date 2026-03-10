@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { SiteService } from "@/api/services/site-service";
-import { ImageService } from "@/api/services/image-service";
 
 export const siteKeys = {
   all: ["sites"] as const,

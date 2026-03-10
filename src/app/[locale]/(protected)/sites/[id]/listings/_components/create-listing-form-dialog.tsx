@@ -18,6 +18,17 @@ import {
 } from "@/components/ui/select";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { DialogModal } from "@/components/ui-kit/table/dialog-modal";
 
 interface CreateListingFormDialogProps {
@@ -25,6 +36,21 @@ interface CreateListingFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  price: z.string().min(1, "Price is required"),
+  categoryId: z.string().min(1, "Category is required"),
+  region: z.string().min(1, "Region is required"),
+  titleEn: z.string().min(1, "Title (English) is required"),
+  contacts: z.string().min(1, "Contacts are required"),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
+  h1: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function CreateListingFormDialog({
   siteId,
@@ -40,17 +66,20 @@ export function CreateListingFormDialog({
   const regionList = metadata?.regions || [];
   const categoryList = metadata?.categories || [];
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    categoryId: "",
-    region: "",
-    titleEn: "",
-    contacts: "",
-    seoTitle: "",
-    seoDescription: "",
-    h1: "",
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      price: "",
+      categoryId: "",
+      region: "",
+      titleEn: "",
+      contacts: "",
+      seoTitle: "",
+      seoDescription: "",
+      h1: "",
+    },
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -58,7 +87,7 @@ export function CreateListingFormDialog({
 
   useEffect(() => {
     if (isOpen) {
-      setFormData({
+      form.reset({
         title: "",
         description: "",
         price: "",
@@ -73,7 +102,7 @@ export function CreateListingFormDialog({
       setSelectedFile(null);
       setPreview(null);
     }
-  }, [isOpen]);
+  }, [isOpen, form]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -92,29 +121,21 @@ export function CreateListingFormDialog({
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
 
     try {
       const listingData = {
-        title: formData.title,
-        description: formData.description,
-        price: parseFloat(formData.price) || 0,
-        categoryId: parseInt(formData.categoryId) || undefined,
-        region: formData.region,
-        titleEn: formData.titleEn,
-        contacts: formData.contacts,
-        seoTitle: formData.seoTitle,
-        seoDescription: formData.seoDescription,
-        h1: formData.h1,
+        title: data.title,
+        description: data.description,
+        price: parseFloat(data.price) || 0,
+        categoryId: parseInt(data.categoryId) || undefined,
+        region: data.region,
+        titleEn: data.titleEn,
+        contacts: data.contacts,
+        seoTitle: data.seoTitle,
+        seoDescription: data.seoDescription,
+        h1: data.h1,
       };
 
       await ListingService.createListing(siteId, listingData, selectedFile);
@@ -136,187 +157,227 @@ export function CreateListingFormDialog({
     <DialogModal
       open={isOpen}
       onOpenChange={onOpenChange}
-      onSave={handleSubmit}
+      onSave={() => form.handleSubmit(onSubmit)()}
       title={t("create_listing")}
       isLoading={isLoading}
     >
-      <form className="space-y-4 pt-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">{t("field_title")}</Label>
-            <Input
-              id="title"
+      <Form {...form}>
+        <form className="space-y-4 pt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
               name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="titleEn">{t("field_title_en")}</Label>
-            <Input
-              id="titleEn"
-              name="titleEn"
-              value={formData.titleEn}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">{t("field_price")}</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="contacts">{t("field_contact")}</Label>
-            <Input
-              id="contacts"
-              name="contacts"
-              value={formData.contacts}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="categoryId">{t("field_category")}</Label>
-            <Select
-              value={formData.categoryId}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, categoryId: value }))
-              }
-            >
-              <SelectTrigger id="categoryId">
-                <SelectValue
-                  placeholder={
-                    isLoadingMetadata ? "Loading..." : t("select_category")
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryList.length > 0 &&
-                  categoryList
-                    .filter((cat: any) => cat.id != null)
-                    .map((cat: any) => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="region">{t("field_region")}</Label>
-            <Select
-              value={formData.region}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, region: value }))
-              }
-            >
-              <SelectTrigger id="region">
-                <SelectValue
-                  placeholder={
-                    isLoadingMetadata ? "Loading..." : t("select_region")
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!isLoadingMetadata &&
-                  regionList.length > 0 &&
-                  regionList
-                    .filter((r: any) => r.name)
-                    .map((r: any) => (
-                      <SelectItem key={r.id || r.name} value={r.name}>
-                        {r.name}
-                      </SelectItem>
-                    ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-4 col-span-2">
-            <Label>{t("field_images")}</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {preview ? (
-                <div className="relative w-20 h-20 group">
-                  <img
-                    src={preview}
-                    alt="preview"
-                    className="w-full h-full object-cover rounded-md border border-default-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeFile}
-                    className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-0.5"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-default-200 rounded-md cursor-pointer hover:border-primary transition-colors">
-                  <Upload className="w-5 h-5 text-default-400" />
-                  <span className="text-[10px] text-default-500 mt-1">
-                    Upload
-                  </span>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                </label>
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_title")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
+            />
+            <FormField
+              control={form.control}
+              name="titleEn"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_title_en")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_price")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="number" step="0.01" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contacts"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_contact")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_category")}</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            isLoadingMetadata
+                              ? "Loading..."
+                              : t("select_category")
+                          }
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categoryList.length > 0 &&
+                        categoryList
+                          .filter((cat: any) => cat.id != null)
+                          .map((cat: any) => (
+                            <SelectItem key={cat.id} value={cat.id.toString()}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="region"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_region")}</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            isLoadingMetadata
+                              ? "Loading..."
+                              : t("select_region")
+                          }
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {!isLoadingMetadata &&
+                        regionList.length > 0 &&
+                        regionList
+                          .filter((r: any) => r.name)
+                          .map((r: any) => (
+                            <SelectItem key={r.id || r.name} value={r.name}>
+                              {r.name}
+                            </SelectItem>
+                          ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-4 col-span-2">
+              <Label>{t("field_images")}</Label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {preview ? (
+                  <div className="relative w-20 h-20 group">
+                    <img
+                      src={preview}
+                      alt="preview"
+                      className="w-full h-full object-cover rounded-md border border-default-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeFile}
+                      className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-0.5"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-default-200 rounded-md cursor-pointer hover:border-primary transition-colors">
+                    <Upload className="w-5 h-5 text-default-400" />
+                    <span className="text-[10px] text-default-500 mt-1">
+                      Upload
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="seoTitle">{t("field_seo_title")}</Label>
-            <Input
-              id="seoTitle"
+            <FormField
+              control={form.control}
               name="seoTitle"
-              value={formData.seoTitle}
-              onChange={handleChange}
-              placeholder={t("field_seo_title")}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_seo_title")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder={t("field_seo_title")} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="h1">{t("field_h1")}</Label>
-            <Input
-              id="h1"
+            <FormField
+              control={form.control}
               name="h1"
-              value={formData.h1}
-              onChange={handleChange}
-              placeholder={t("field_h1")}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("field_h1")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder={t("field_h1")} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2 col-span-2">
-            <Label htmlFor="seoDescription">{t("field_seo_description")}</Label>
-            <Textarea
-              id="seoDescription"
+            <FormField
+              control={form.control}
               name="seoDescription"
-              value={formData.seoDescription}
-              onChange={handleChange}
-              placeholder={t("field_seo_description")}
-              rows={2}
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>{t("field_seo_description")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder={t("field_seo_description")}
+                      rows={2}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="description">{t("field_description")}</Label>
-          <Textarea
-            id="description"
+          <FormField
+            control={form.control}
             name="description"
-            rows={4}
-            value={formData.description}
-            onChange={handleChange}
-            required
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("field_description")}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} rows={4} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-      </form>
+        </form>
+      </Form>
     </DialogModal>
   );
 }

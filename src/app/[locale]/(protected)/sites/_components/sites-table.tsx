@@ -40,7 +40,6 @@ import { useState } from "react";
 
 export function SitesTable() {
   const { data = [], isLoading } = useSites();
-  console.log("SITES", data);
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
@@ -55,20 +54,6 @@ export function SitesTable() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const translations = {
-    site_name: t("table_site_name"),
-    domain: t("table_domain"),
-    folder: t("table_images_folder"),
-    region: t("table_region"),
-    owner: t("table_owner"),
-    status: t("table_status"),
-    autogeneration: t("table_autogeneration"),
-    actions: t("table_actions"),
-    action_view: t("action_view"),
-    action_delete: t("action_delete"),
-    filter_placeholder: t("filter_placeholder"),
-    items_selected: t("items_selected"),
-  };
   const columns: ColumnDef<Site>[] = [
     {
       id: "select",
@@ -107,7 +92,7 @@ export function SitesTable() {
     {
       id: "siteNameCol",
       accessorKey: "marketplaceName",
-      header: translations.site_name.toUpperCase(),
+      header: t("table_site_name").toUpperCase(),
       cell: ({ row }) => (
         <div className="font-bold text-default-900 whitespace-nowrap lowercase">
           {row.original.marketplaceName}
@@ -116,7 +101,7 @@ export function SitesTable() {
     },
     {
       accessorKey: "ownerName",
-      header: translations.owner.toUpperCase(),
+      header: t("table_owner").toUpperCase(),
       cell: ({ row }) => {
         const ownerName = row.original.ownerName;
         return (
@@ -138,7 +123,7 @@ export function SitesTable() {
     },
     {
       accessorKey: "domainName",
-      header: translations.domain,
+      header: t("table_domain"),
       cell: ({ row }) => (
         <Link
           href={`https://${row.original.domainName}`}
@@ -152,7 +137,7 @@ export function SitesTable() {
     },
     {
       accessorKey: "folderName",
-      header: translations.folder.toUpperCase(),
+      header: t("table_images_folder").toUpperCase(),
       cell: ({ row }) => (
         <div className="text-default-500 whitespace-nowrap">
           {row.original.folder}
@@ -161,7 +146,7 @@ export function SitesTable() {
     },
     {
       accessorKey: "autogeneration",
-      header: translations.autogeneration.toUpperCase(),
+      header: t("table_autogeneration").toUpperCase(),
       cell: ({ row }) => (
         <div className="text-default-500 whitespace-nowrap">
           <Badge
@@ -175,7 +160,7 @@ export function SitesTable() {
     },
     {
       accessorKey: "status",
-      header: translations.status.toUpperCase(),
+      header: t("table_status").toUpperCase(),
       cell: ({ row }) => {
         const status = row.original.status;
         return (
@@ -191,17 +176,17 @@ export function SitesTable() {
     {
       id: "actions",
       header: () => (
-        <div className="text-end">{translations.actions.toUpperCase()}</div>
+        <div className="text-end">{t("table_actions").toUpperCase()}</div>
       ),
       cell: ({ row }) => {
         const actions = [
           {
-            label: translations.action_view,
+            label: t("action_view"),
             icon: <Eye />,
             onClick: () => router.push(`/${locale}/sites/${row.original.id}`),
           },
           {
-            label: translations.action_delete,
+            label: t("action_delete"),
             icon: <Trash2 />,
             onClick: () => console.log("Delete", row.original.id),
             variant: "destructive" as const,
@@ -242,12 +227,12 @@ export function SitesTable() {
     <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
       <CardHeader className="flex flex-row items-center justify-between py-6 px-6 bg-white dark:bg-slate-900">
         <CardTitle className="text-xl font-bold text-default-900">
-          {translations.site_name}
+          {t("table_site_name")}
         </CardTitle>
         <div className="flex items-center gap-2">
           <div className="relative">
             <Input
-              placeholder={translations.filter_placeholder}
+              placeholder={t("filter_placeholder")}
               value={
                 (table.getColumn("status")?.getFilterValue() as string) ?? ""
               }

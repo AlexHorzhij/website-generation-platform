@@ -4,9 +4,7 @@ import Cookies from "js-cookie";
 
 export const authService = {
   login: async (data: LoginData): Promise<AuthResponse> => {
-    console.log("data", data);
     const response = await apiClient.post<AuthResponse>("/users/login", data);
-    console.log("response", response);
     return response.data;
   },
 
@@ -23,8 +21,9 @@ export const authService = {
     return response.data;
   },
 
-  logout: () => {
-    Cookies.remove("go_market_token");
+  logout: async () => {
+    const response = await apiClient.post("/users/logout");
+    Cookies.remove("JSESSIONID");
     localStorage.removeItem("user");
   },
 };

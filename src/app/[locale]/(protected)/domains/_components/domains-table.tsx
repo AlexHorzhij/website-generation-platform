@@ -60,8 +60,8 @@ export function DomainsTable() {
       accessorKey: "regionId",
       header: t("table_region").toUpperCase(),
       cell: ({ row }) => (
-        <div className="text-default-500 font-medium">
-          {row.getValue("regionId")}
+        <div className="text-default-500 font-medium lowercase">
+          {row.original.regionId?.toLowerCase()}
         </div>
       ),
     },
@@ -72,7 +72,7 @@ export function DomainsTable() {
         <Link
           href={`https://${row.original.domainName}`}
           target="_blank"
-          className="flex items-center gap-1.5 text-primary hover:underline transition-colors font-medium"
+          className="flex items-center gap-1.5 text-primary hover:underline transition-colors font-medium lowercase"
         >
           {row.original.domainName}
           <ExternalLink className="w-3.5 h-3.5 opacity-60" />

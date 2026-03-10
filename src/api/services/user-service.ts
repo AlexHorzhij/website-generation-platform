@@ -18,9 +18,10 @@ export const UserService = {
     await apiClient.patch(`/users/${userId}/make-admin`);
   },
 
-  async deleteUser(userId: number): Promise<void> {
+  async deleteUser(userId: number): Promise<any> {
     const response = await apiClient.delete(`/users/${userId}`);
 
     console.log("response delete user", response);
+    return response;
   },
 };

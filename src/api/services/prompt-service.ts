@@ -32,9 +32,10 @@ export const PromptService = {
       const response = await apiClient.get<Prompt[]>(
         `/prompts/sites/${siteId}/prompts`,
       );
+      console.log("getSitePrompts", response.data);
       return response.data;
     } catch (error) {
-      console.warn(`Error fetching prompts for site ${siteId}`, error);
+      console.warn(`Errors fetching prompts for site ${siteId}`, error);
       return [];
     }
   },
