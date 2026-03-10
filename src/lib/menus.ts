@@ -135,7 +135,7 @@ export function getSiteMenuList(
           href: `${base}/images`,
           label: t("site_images"),
           active: pathname.startsWith(`${base}/images`),
-          icon: "heroicons-outline:image",
+          icon: "heroicons-outline:photograph",
           submenus: [],
         },
         {

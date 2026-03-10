@@ -309,7 +309,8 @@
     "action_back_to_list": "До списку",
     "action_add_user": "Додати користувача",
     "select_region": "Виберіть регіон",
-    "axes": "Осі"
+    "axes": "Осі",
+    "site_images": "Зображення"
   },
   "SitesManagement": {
     "title": "Керування сайтами",

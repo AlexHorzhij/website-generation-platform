@@ -308,7 +308,8 @@
     "go_back": "Go Back",
     "action_back_to_list": "Back to list",
     "action_add_user": "Add User",
-    "axes": "Axes"
+    "axes": "Axes",
+    "site_images": "Images"
   },
   "SitesManagement": {
     "title": "Sites Management",

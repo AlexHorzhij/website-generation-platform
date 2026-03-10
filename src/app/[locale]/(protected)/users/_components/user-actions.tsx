@@ -208,7 +208,7 @@ export const UserActions = ({ user }: UserActionsProps) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will significantly impact the user's data.
+              This action will significantly impact the user&apos;s data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,35 +1,37 @@
-"use client"
+"use client";
 
 import { useConfig } from "@/hooks/use-config";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+// const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = (props: any) => null; // Dummy component for now to keep file valid
 
 interface RevenueBarChartProps {
   height?: number;
   chartType?: "bar" | "area";
   series?: any[];
-  chartColors?: string[]
+  chartColors?: string[];
 }
-const defaultSeries = [{
-  name: "Net Profit",
-  data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-},
-{
-  name: "Revenue",
-  data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-},
-{
-  name: "Free Cash Flow",
-  data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-}]
+const defaultSeries = [
+  {
+    name: "Net Profit",
+    data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+  },
+  {
+    name: "Revenue",
+    data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+  },
+  {
+    name: "Free Cash Flow",
+    data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+  },
+];
 const RevenueBarChart = ({
   height = 400,
   chartType = "bar",
   series = defaultSeries,
-  chartColors = ["#4669FA", "#0CE7FA", "#FA916B"]
-
+  chartColors = ["#4669FA", "#0CE7FA", "#FA916B"],
 }: RevenueBarChartProps) => {
   const [config] = useConfig();
   const { isRtl } = config;

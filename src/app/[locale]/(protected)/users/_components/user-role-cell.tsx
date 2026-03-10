@@ -88,7 +88,7 @@ export const UserRoleCell = ({ userId, initialRole }: UserRoleCellProps) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This will promote the user to **ADMIN**. Currently, we cannot
-              downgrade a user's role back to USER once they are an admin.
+              downgrade a user&apos;s role back to USER once they are an admin.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

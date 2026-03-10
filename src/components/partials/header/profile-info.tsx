@@ -2,27 +2,20 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "@/components/ui/icon";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
-import { useMe, useLogout } from "@/api/hooks/use-auth";
+import { useLogout } from "@/api/hooks/use-auth";
 
 const ProfileInfo = () => {
-  const { data: user } = useMe();
+  // const { data: user } = useMe();
   const { logout } = useLogout();
 
-  const userName = user?.username || "Jhon Doe";
-  const userEmail = user?.email || "info@codeshaper.net";
+  const userName = "Menu";
+  // console.log("user", user);
+  // const userEmail = user?.email || "info@codeshaper.net";
   const userAvatar = "/images/avatar/av-1.jpg";
 
   return (

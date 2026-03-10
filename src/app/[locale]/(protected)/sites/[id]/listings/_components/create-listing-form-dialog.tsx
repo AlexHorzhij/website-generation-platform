@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { ListingService } from "@/api/services/listing-service";
 import { toast } from "sonner";
 import { siteKeys } from "@/api/hooks/use-sites";
@@ -290,10 +291,13 @@ export function CreateListingFormDialog({
               <div className="flex flex-wrap gap-2 mb-2">
                 {preview ? (
                   <div className="relative w-20 h-20 group">
-                    <img
+                    <Image
                       src={preview}
                       alt="preview"
+                      width={80}
+                      height={80}
                       className="w-full h-full object-cover rounded-md border border-default-200"
+                      unoptimized
                     />
                     <button
                       type="button"

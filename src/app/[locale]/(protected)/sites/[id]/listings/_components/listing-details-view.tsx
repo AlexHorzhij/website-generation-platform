@@ -3,6 +3,7 @@
 import { Listing } from "@/api/types/listing";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
+import Image from "next/image";
 
 import { useTranslations } from "next-intl";
 
@@ -111,10 +112,13 @@ export function ListingDetailsView({
                 key={idx}
                 className="relative flex-none w-72 h-48 rounded-2xl overflow-hidden border border-default-200 bg-default-50 shadow-sm group"
               >
-                <img
+                <Image
                   src={`https://placehold.co/600x400/f8fafc/64748b?text=Image+${idx + 1}`}
                   alt={`Listing image ${idx + 1}`}
+                  width={288}
+                  height={192}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Icon
