@@ -9,13 +9,23 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
   const [hoverConfig, setHoverConfig] = useMenuHoverConfig();
   if (config.menuHidden || config.layout === "horizontal") return null;
 
+  const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1280 : true;
+
   if (config.sidebar === "two-column") {
+    const sidebarWidthValue = (config.subMenu || !config.hasSubMenu) ? "72px" : "300px";
     return (
-      <aside className={cn("fixed z-50 h-full xl:flex hidden", {})}>
+      <aside
+        style={{ width: isDesktop ? sidebarWidthValue : undefined }}
+        className={cn("fixed z-50 h-full xl:flex hidden", {})}
+      >
         <div className=" relative flex h-full ">{children}</div>
       </aside>
     );
   }
+
+  const sidebarWidthValue = config.sidebar === "compact"
+    ? "112px"
+    : (config.collapsed && !hoverConfig.hovered ? "72px" : "248px");
 
   return (
     <aside
@@ -25,21 +35,19 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
       onMouseLeave={() =>
         config.sidebar === "classic" && setHoverConfig({ hovered: false })
       }
+      style={{ width: isDesktop ? sidebarWidthValue : undefined }}
       className={cn(
-        "fixed z-50 w-[248px] bg-sidebar shadow-base xl:block hidden ",
+        "fixed z-50 bg-sidebar shadow-base xl:block hidden ",
         {
           [`dark theme-${config.sidebarColor}`]:
             config.sidebarColor !== "light",
-          "w-[72px]": config.collapsed && config.sidebar !== "compact",
           "border-b": config.skin === "bordered",
           "shadow-base": config.skin === "default",
-          "h-full start-0":
+          "h-full inset-s-0":
             config.layout !== "semi-box" && config.layout !== "compact",
-          "m-6 bottom-0 top-0  start-0   rounded-md":
+          "m-6 bottom-0 top-0  inset-s-0   rounded-md":
             config.layout === "semi-box",
-          "m-10 bottom-0 top-0  start-0   ": config.layout === "compact",
-          "w-28": config.sidebar === "compact",
-          "w-[248px]": hoverConfig.hovered,
+          "m-10 bottom-0 top-0  inset-s-0   ": config.layout === "compact",
         }
       )}
     >

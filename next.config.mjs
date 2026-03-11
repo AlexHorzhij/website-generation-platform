@@ -37,6 +37,15 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "apexcharts",
+      "react-apexcharts",
+      "framer-motion",
+      "@iconify/react",
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

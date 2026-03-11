@@ -22,8 +22,14 @@ export const authService = {
   },
 
   logout: async () => {
-    const response = await apiClient.post("/users/logout");
-    Cookies.remove("JSESSIONID");
-    localStorage.removeItem("user");
+    try {
+      await apiClient.post("/logout");
+      localStorage.removeItem("user");
+      // window.location.href = "/auth/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      localStorage.removeItem("user");
+      // window.location.href = "/auth/login";
+    }
   },
 };

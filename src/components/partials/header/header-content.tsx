@@ -7,6 +7,11 @@ const HeaderContent = ({ children }: { children: React.ReactNode }) => {
   const [config] = useConfig();
 
   if (config.sidebar === "two-column") {
+    const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1280 : true;
+    const sidebarOffset = (config.menuHidden || config.layout === "horizontal" || !isDesktop)
+      ? "0px"
+      : (config.subMenu || !config.hasSubMenu ? "72px" : "300px");
+
     return (
       <header
         className={cn("top-0 z-50", config.navbar, {
@@ -14,13 +19,12 @@ const HeaderContent = ({ children }: { children: React.ReactNode }) => {
         })}
       >
         <div
+          style={{ marginLeft: sidebarOffset }}
           className={cn(
-            "flex-none   bg-header backdrop-blur-lg md:px-6 px-[15px] py-3    xl:ms-[300px] flex items-center justify-between  relative",
+            "flex-none bg-header backdrop-blur-lg md:px-6 px-[15px] py-3 flex items-center justify-between relative",
             {
-              "xl:ms-[72px]": config.subMenu || !config.hasSubMenu,
               "border-b":
                 config.skin === "bordered" && config.layout !== "semi-box",
-              "xl:ms-0": config.menuHidden || config.layout === "horizontal",
               border:
                 config.skin === "bordered" && config.layout === "semi-box",
               "shadow-base": config.skin === "default",
@@ -33,6 +37,11 @@ const HeaderContent = ({ children }: { children: React.ReactNode }) => {
       </header>
     );
   }
+
+  const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1280 : true;
+  const headerOffset = (config.menuHidden || config.layout === "horizontal" || !isDesktop)
+    ? "0px"
+    : (config.sidebar === "compact" ? "112px" : (config.collapsed ? "72px" : "248px"));
 
   return (
     <header
@@ -47,18 +56,15 @@ const HeaderContent = ({ children }: { children: React.ReactNode }) => {
       })}
     >
       <div
+        style={{ marginLeft: headerOffset }}
         className={cn(
-          "flex-none    bg-header backdrop-blur-lg md:px-6 px-[15px] py-3    xl:ms-[248px]  flex items-center justify-between relative ",
+          "flex-none bg-header backdrop-blur-lg md:px-6 px-[15px] py-3 flex items-center justify-between relative ",
           {
-            "xl:ms-[72px]": config.collapsed,
             "border-b":
               config.skin === "bordered" && config.layout !== "semi-box",
             border: config.skin === "bordered" && config.layout === "semi-box",
             "shadow-base": config.skin === "default",
-            "xl:ms-0": config.menuHidden || config.layout === "horizontal",
             "top-6 rounded-md": config.layout === "semi-box",
-            "xl:ms-28":
-              config.sidebar === "compact" && config.layout !== "horizontal",
             "rounded-md": config.navbar === "floating",
           }
         )}

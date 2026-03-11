@@ -93,6 +93,7 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   );
 
   const types = Object.keys(groupedAxes).sort();
+  console.log("groupedAxes", groupedAxes);
 
   AxisService.getAxes();
 

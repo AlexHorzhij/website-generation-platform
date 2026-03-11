@@ -7,13 +7,17 @@ const LayoutContentProvider = ({ children }: { children: React.ReactNode }) => {
   const [config, setConfig] = useConfig();
 
   if (config.sidebar === "two-column") {
+    const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1280 : true;
+    const sidebarOffset = (config.menuHidden || config.layout === "horizontal" || !isDesktop)
+      ? "0px"
+      : (config.subMenu || !config.hasSubMenu ? "72px" : "300px");
+
     return (
       <main
-        className={cn("flex-1 xl:ms-[300px]  ", {
-          "xl:ms-[72px]": config.subMenu || !config.hasSubMenu,
+        style={{ marginLeft: sidebarOffset }}
+        className={cn("flex-1", {
           "bg-default-100 dark:bg-background": config.skin === "default",
           "bg-transparent": config.skin === "bordered",
-          "xl:ms-0": config.menuHidden || config.layout === "horizontal",
         })}
       >
         <div
@@ -27,15 +31,18 @@ const LayoutContentProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
+  const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1280 : true;
+  const sidebarOffset = (config.menuHidden || config.layout === "horizontal" || !isDesktop)
+    ? "0px"
+    : (config.sidebar === "compact" ? "112px" : (config.collapsed ? "72px" : "248px"));
+
   return (
     <>
       <main
-        className={cn("flex-1 xl:ms-[248px]", {
-          "xl:ms-[72px]": config.collapsed,
+        style={{ marginLeft: sidebarOffset }}
+        className={cn("flex-1", {
           "bg-default-100 dark:bg-background": config.skin === "default",
           "bg-transparent": config.skin === "bordered",
-          "xl:ms-0": config.menuHidden || config.layout === "horizontal",
-          "xl:ms-28": config.sidebar === "compact",
           "pt-6": config.navbar === "floating" && config.layout !== "semi-box",
         })}
       >

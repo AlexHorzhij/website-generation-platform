@@ -170,6 +170,26 @@
     --menu-arrow: 228, 45%, 98%;
     --menu-arrow-active: 212.7 26.8% 83.9%;
     --menu-foreground: 215, 20%, 65%;
+
+    --sidebar-width: 248px;
+    --sidebar-collapsed-width: 72px;
+  }
+
+  @layer utilities {
+    @media (min-width: 1280px) {
+      .sidebar-margin {
+        margin-left: var(--sidebar-width) !important;
+      }
+      .sidebar-margin-collapsed {
+        margin-left: var(--sidebar-collapsed-width) !important;
+      }
+      .sidebar-width {
+        width: var(--sidebar-width) !important;
+      }
+      .sidebar-width-collapsed {
+        width: var(--sidebar-collapsed-width) !important;
+      }
+    }
   }
 
   .dark {

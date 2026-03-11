@@ -3,21 +3,14 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
-const BASE_URL =
-  typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
-    : "/api";
-const VERSION = process.env.NEXT_PUBLIC_API_VERSION || "v1";
 
-let serverCookies: any;
-if (typeof window === "undefined") {
-  try {
-    const { cookies } = require("next/headers");
-    serverCookies = cookies;
-  } catch (e) {
-    // Ігноруємо помилку, якщо ми не в середовищі Next.js
-  }
-}
+const IS_SERVER = typeof window === "undefined";
+
+const BASE_URL = IS_SERVER
+  ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+  : "/api";
+
+const VERSION = process.env.NEXT_PUBLIC_API_VERSION || "v1";
 
 const apiClient = axios.create({
   baseURL: `${BASE_URL.replace(/\/$/, "")}/${VERSION}`,
@@ -29,21 +22,26 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor for handle cookies & headers
+// Request interceptor: Handling authentication and forwarding cookies
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    // Forward cookies on the server side (Next.js server components/actions)
-    if (typeof window === "undefined" && serverCookies) {
+    // --- SERVER SIDE LOGIC ---
+    if (IS_SERVER) {
       try {
-        const cookieStore = await serverCookies();
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
         const allCookies = cookieStore.toString();
+
         if (allCookies && config.headers) {
           config.headers.Cookie = allCookies;
         }
       } catch (error) {
-        // Silently ignore if cookies cannot be accessed
+        // Silently ignore if cookies cannot be accessed (e.g., outside of request context)
       }
     }
+
+    // --- CLIENT SIDE LOGIC ---
+    // (In the browser, axios automatically includes 'withCredentials' cookies)
 
     return config;
   },
@@ -52,16 +50,31 @@ apiClient.interceptors.request.use(
   },
 );
 
-// Response interceptor for handling common errors
+// Response interceptor: Handling global errors like 401 Unauthorized
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: AxiosError) => {
-    console.log("error", error);
+  async (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Cookies.remove("JSESSIONID");
-      localStorage.removeItem("user");
-      window.location.href = "/auth/login";
+      // --- CLIENT SIDE 401 HANDLING ---
+      if (!IS_SERVER) {
+        console.log("[Client] Unauthorized. Cleaning up and redirecting...");
+        localStorage.removeItem("user");
+        window.location.href = "/auth/login";
+      }
+      // --- SERVER SIDE 401 HANDLING ---
+      else {
+        console.log("[Server] Unauthorized request detected.");
+
+        try {
+          const { cookies } = await import("next/headers");
+          const cookieStore = await cookies();
+          cookieStore.delete("JSESSIONID");
+        } catch (e) {
+          // In Server Components, we cannot delete cookies, only read them.
+        }
+      }
     }
+
     return Promise.reject(error);
   },
 );
