@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Site, UpdateSiteRequest } from "@/api/types/site";
 import { useTranslations } from "next-intl";
 import { DialogModal } from "@/components/ui-kit/table/dialog-modal";
+import { useRouter } from "next/navigation";
 
 interface EditSiteFormDialogProps {
   site: Site;
@@ -24,6 +25,7 @@ export function EditSiteFormDialog({
   onOpenChange,
 }: EditSiteFormDialogProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("SitesManagement");
 
@@ -81,6 +83,7 @@ export function EditSiteFormDialog({
       queryClient.invalidateQueries({
         queryKey: siteKeys.all,
       });
+      router.refresh();
       onOpenChange(false);
     } catch (error) {
       toast.error("Failed to update site");

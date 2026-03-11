@@ -182,7 +182,7 @@ export default function ListingsClient({ site }: ListingsClientProps) {
       accessorKey: "price",
       header: t("table_price").toUpperCase(),
       cell: ({ row }) => (
-        <div className="font-semibold text-default-900">
+        <div className="font-semibold text-default-900 uppercase">
           {row.getValue("price") || "0.00"} {site.currency}
         </div>
       ),

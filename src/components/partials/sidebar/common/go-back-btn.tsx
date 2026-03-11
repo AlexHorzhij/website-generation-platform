@@ -27,7 +27,12 @@ const GoBackBtn = ({ text, link, collapsed }: GoBackBtnProps) => {
         <TooltipProvider>
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 hover:text-white"
+                asChild
+              >
                 <Link href={link}>
                   <Icon
                     icon="heroicons-outline:arrow-left"
@@ -48,14 +53,14 @@ const GoBackBtn = ({ text, link, collapsed }: GoBackBtnProps) => {
     <div className="px-4 pt-2 pb-1">
       <Button
         variant="ghost"
-        size="sm"
-        className="w-full justify-start text-sm font-medium text-default-600 hover:text-default-900 gap-2 px-2"
+        size="md"
+        className="w-full justify-start text-sm font-medium text-default-600 hover:text-white gap-2 px-2"
         asChild
       >
         <Link href={link}>
           <Icon
             icon="heroicons-outline:arrow-left"
-            className="w-4 h-4 flex-shrink-0"
+            className="w-4 h-4 shrink-0"
           />
           <span className="truncate">{text}</span>
         </Link>

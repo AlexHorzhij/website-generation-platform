@@ -132,10 +132,10 @@ export function DomainDashboardClient({ data }: DomainDashboardClientProps) {
                       key={i}
                       className="h-12 border-b border-default-50 hover:bg-default-50/50 transition-colors"
                     >
-                      <TableCell className="px-6 font-medium text-default-900">
+                      <TableCell className="px-6 font-medium text-default-900 lowercase">
                         {domain.name}
                       </TableCell>
-                      <TableCell className="px-6 text-default-500">
+                      <TableCell className="px-6 text-default-500 lowercase">
                         {domain.tld}
                       </TableCell>
                       <TableCell className="px-6">
@@ -271,10 +271,10 @@ export function DomainDashboardClient({ data }: DomainDashboardClientProps) {
                       key={i}
                       className="h-12 border-b border-default-50 hover:bg-default-50/50 transition-colors"
                     >
-                      <TableCell className="px-6 font-semibold text-default-900">
+                      <TableCell className="px-6 font-semibold text-default-900 lowercase">
                         .{tld.name}
                       </TableCell>
-                      <TableCell className="px-6 text-default-500">
+                      <TableCell className="px-6 text-default-500 lowercase">
                         ${tld.registrationPrice}
                       </TableCell>
                       <TableCell className="px-6 text-default-500">
