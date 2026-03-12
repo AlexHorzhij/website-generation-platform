@@ -24,6 +24,7 @@ interface AxesListClientProps {
 
 export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const { data: axes = [], isLoading } = useSiteAxes(siteId);
+  console.log("axes", axes);
   const deleteAxis = useDeleteAxis();
   const t = useTranslations("AxesManagement");
 

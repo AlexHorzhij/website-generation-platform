@@ -36,6 +36,7 @@ apiClient.interceptors.request.use(
           config.headers.Cookie = allCookies;
         }
       } catch (error) {
+        console.log("Axios interseptor error", error);
         // Silently ignore if cookies cannot be accessed (e.g., outside of request context)
       }
     }
@@ -54,12 +55,13 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
+    console.log("Axios response error", error);
     if (error.response?.status === 401) {
       // --- CLIENT SIDE 401 HANDLING ---
       if (!IS_SERVER) {
         console.log("[Client] Unauthorized. Cleaning up and redirecting...");
         localStorage.removeItem("user");
-        window.location.href = "/auth/login";
+        // window.location.href = "/auth/login";
       }
       // --- SERVER SIDE 401 HANDLING ---
       else {
