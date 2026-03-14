@@ -11,8 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { useRouter } from "@/components/navigation";
 import { useLogin } from "@/api/hooks/use-auth";
 
 const schema = z.object({
@@ -44,7 +42,8 @@ const LoginForm = () => {
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    login(data);
+    const loginData = login(data);
+    console.log("loginData", loginData);
   };
 
   return (

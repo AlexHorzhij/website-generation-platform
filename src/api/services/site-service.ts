@@ -5,47 +5,33 @@ import {
   Region,
   Site,
   UpdateSiteRequest,
+  DashboardStatistics,
 } from "@/api/types/site";
 import apiClient from "@/api/client";
 import { cache } from "react";
 
 export const SiteService = {
-  async getSites(): Promise<Site[]> {
-    try {
-      const response = await apiClient.get<Site[]>("/sites");
-      if (response.data && response.data.length > 0) {
-        return response.data;
-      }
+  getSites: cache(async (): Promise<Site[]> => {
+    const response = await apiClient.get<Site[]>("/sites");
+    return response.data || [];
+  }),
 
-      return [];
-    } catch (error) {
-      console.warn("Backend not available, using mock sites data", error);
-      return [];
-    }
-  },
+  getDashboardStatistics: cache(async (): Promise<DashboardStatistics> => {
+    const response = await apiClient.get<DashboardStatistics>(
+      "/sites/statistics/dashboard"
+    );
+    return response.data;
+  }),
 
   getSiteById: cache(async (id: number): Promise<Site | null> => {
-    try {
-      const response = await apiClient.get<Site[]>(`/sites`);
-      const site = response.data.find((site) => site.id === id);
-      return site || null;
-    } catch (error) {
-      console.warn("Backend not available, using mock site data", error);
-      return null;
-    }
+    const response = await apiClient.get<Site[]>(`/sites`);
+    const site = response.data.find((site) => site.id === id);
+    return site || null;
   }),
 
   async getRegions(siteId: number): Promise<Region[]> {
-    try {
-      const response = await apiClient.get<Region[]>(`/regions/site/${siteId}`);
-      return response.data;
-    } catch (error) {
-      console.warn(
-        "Backend not available, returning empty regions list",
-        error,
-      );
-      return [];
-    }
+    const response = await apiClient.get<Region[]>(`/regions/site/${siteId}`);
+    return response.data || [];
   },
 
   async createSite(data: CreateSiteRequest): Promise<Site> {

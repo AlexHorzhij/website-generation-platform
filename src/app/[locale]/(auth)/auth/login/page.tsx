@@ -1,9 +1,7 @@
 import LoginForm from "@/components/partials/auth/login-form";
 import Logo from "@/components/partials/auth/logo";
 import Copyright from "@/components/partials/auth/copyright";
-import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
-import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = {
   title: "Sign In — GoMarketPlatform",

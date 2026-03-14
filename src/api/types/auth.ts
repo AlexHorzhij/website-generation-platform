@@ -9,6 +9,8 @@ export interface User {
 export interface AuthResponse {
   message: string;
   sessionId: string;
+  username: string;
+  role: string;
 }
 
 export interface LoginData {

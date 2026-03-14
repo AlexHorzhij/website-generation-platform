@@ -3,6 +3,7 @@ import { AxisService, UpdateAxisRequest } from "@/api/services/axis-service";
 
 export const axisKeys = {
   all: ["axes"] as const,
+  types: () => [...axisKeys.all, "types"] as const,
   site: (siteId: number) => [...axisKeys.all, "site", siteId] as const,
 };
 
@@ -10,6 +11,13 @@ export function useAxes() {
   return useQuery({
     queryKey: axisKeys.all,
     queryFn: () => AxisService.getAxes(),
+  });
+}
+
+export function useAxeTypes() {
+  return useQuery({
+    queryKey: axisKeys.types(),
+    queryFn: () => AxisService.getAxeTypes(),
   });
 }
 

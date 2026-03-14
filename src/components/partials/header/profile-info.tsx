@@ -3,6 +3,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "@/components/ui/icon";
@@ -13,9 +15,8 @@ const ProfileInfo = () => {
   // const { data: user } = useMe();
   const { logout } = useLogout();
 
-  const userName = "Menu";
-  // console.log("user", user);
-  // const userEmail = user?.email || "info@codeshaper.net";
+  const { name, role } = JSON.parse(localStorage.getItem("userGM") || "{}");
+
   const userAvatar = "/images/avatar/av-1.jpg";
 
   return (
@@ -25,14 +26,14 @@ const ProfileInfo = () => {
           <div className=" flex items-center gap-3  text-default-800 ">
             <Image
               src={userAvatar}
-              alt={userName}
+              alt={name}
               width={36}
               height={36}
               className="rounded-full"
             />
 
             <div className="text-sm font-medium  capitalize lg:block hidden  ">
-              {userName}
+              {name}
             </div>
             <span className="text-base  me-2.5 lg:inline-block hidden">
               <Icon icon="heroicons-outline:chevron-down"></Icon>
@@ -40,28 +41,23 @@ const ProfileInfo = () => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 p-0" align="end">
-          {/* <DropdownMenuLabel className="flex gap-2 items-center mb-1 p-3">
-            <Image
-              src={userAvatar}
-              alt={userName}
-              width={36}
-              height={36}
-              className="rounded-full"
-            />
-
-            <div>
+          <DropdownMenuLabel className="flex gap-2 items-center mb-1 p-3">
+            <div className="flex flex-col gap-2">
               <div className="text-sm font-medium text-default-800 capitalize ">
-                {userName}
+                {name}
               </div>
-              <Link
+              <div className="text-sm font-medium text-default-400 capitalize ">
+                {role}
+              </div>
+              {/* <Link
                 href="/dashboard"
                 className="text-xs text-default-600 hover:text-primary"
               >
                 {userEmail}
-              </Link>
+              </Link> */}
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator className="mb-0 dark:bg-background" /> */}
+          <DropdownMenuSeparator className="mb-0 dark:bg-background" />
           <DropdownMenuItem className="flex items-center gap-2 text-sm font-medium text-default-600 capitalize my-1 px-3 cursor-pointer">
             <div
               onClick={() => logout()}

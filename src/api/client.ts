@@ -3,6 +3,13 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
+const isRedirectError = (error: any): boolean => {
+  return !!(
+    error &&
+    (error.digest?.includes("NEXT_REDIRECT") ||
+      error.message === "NEXT_REDIRECT")
+  );
+};
 
 const IS_SERVER = typeof window === "undefined";
 
@@ -25,7 +32,6 @@ const apiClient = axios.create({
 // Request interceptor: Handling authentication and forwarding cookies
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    // --- SERVER SIDE LOGIC ---
     if (IS_SERVER) {
       try {
         const { cookies } = await import("next/headers");
@@ -36,43 +42,30 @@ apiClient.interceptors.request.use(
           config.headers.Cookie = allCookies;
         }
       } catch (error) {
-        console.log("Axios interseptor error", error);
-        // Silently ignore if cookies cannot be accessed (e.g., outside of request context)
+        // Silently ignore if cookies cannot be accessed
       }
     }
-
-    // --- CLIENT SIDE LOGIC ---
-    // (In the browser, axios automatically includes 'withCredentials' cookies)
-
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  },
+  (error: AxiosError) => Promise.reject(error),
 );
 
 // Response interceptor: Handling global errors like 401 Unauthorized
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
-    console.log("Axios response error", error);
     if (error.response?.status === 401) {
-      // --- CLIENT SIDE 401 HANDLING ---
       if (!IS_SERVER) {
-        console.log("[Client] Unauthorized. Cleaning up and redirecting...");
-        localStorage.removeItem("user");
-        // window.location.href = "/auth/login";
-      }
-      // --- SERVER SIDE 401 HANDLING ---
-      else {
+        console.log("[Client] Unauthorized. Redirecting...");
+        localStorage.removeItem("userGM");
+        window.location.href = "/auth/login";
+      } else {
         console.log("[Server] Unauthorized request detected.");
-
         try {
-          const { cookies } = await import("next/headers");
-          const cookieStore = await cookies();
-          cookieStore.delete("JSESSIONID");
+          const { redirect } = await import("next/navigation");
+          redirect("/auth/login");
         } catch (e) {
-          // In Server Components, we cannot delete cookies, only read them.
+          if (isRedirectError(e)) throw e;
         }
       }
     }

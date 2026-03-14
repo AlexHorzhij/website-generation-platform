@@ -1,6 +1,6 @@
 "use client";
 
-import { useSiteAxes, useDeleteAxis } from "@/api/hooks/use-axes";
+import { useSiteAxes, useDeleteAxis, useAxeTypes } from "@/api/hooks/use-axes";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +24,13 @@ interface AxesListClientProps {
 
 export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const { data: axes = [], isLoading } = useSiteAxes(siteId);
+  console.log("axes", axes);
+  const { data: axesTypes } = useAxeTypes();
+  console.log("axesTypes", axesTypes);
+  const typeDir = {};
+  // axesTypes?.forEach((item) => typeDir[item.type]={..item});
+
+  console.log("axesTypes", axesTypes);
   console.log("axes", axes);
   const deleteAxis = useDeleteAxis();
   const t = useTranslations("AxesManagement");

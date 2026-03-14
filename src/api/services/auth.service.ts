@@ -1,6 +1,5 @@
 import apiClient from "@/api/client";
 import { LoginData, RegisterData, AuthResponse } from "@/api/types/auth";
-import Cookies from "js-cookie";
 
 export const authService = {
   login: async (data: LoginData): Promise<AuthResponse> => {

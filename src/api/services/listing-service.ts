@@ -1,34 +1,26 @@
 import apiClient from "@/api/client";
 import { Listing, ListingMetadata } from "@/api/types/listing";
+import { cache } from "react";
 
 export const ListingService = {
   async getMetadata(siteId: number | string): Promise<ListingMetadata> {
-    try {
-      const response = await apiClient.get<ListingMetadata>(
-        `/listings/metadata/${siteId}`,
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching listing metadata", error);
-      return {
-        categories: [],
-        regions: [],
-      };
-    }
+    const response = await apiClient.get<ListingMetadata>(
+      `/listings/metadata/${siteId}`,
+    );
+    return response.data;
   },
 
   async getListingsBySiteId(siteId: number | string): Promise<Listing[]> {
-    try {
-      const response = await apiClient.get<Listing[]>(
-        `/listings/site/${siteId}`,
-      );
-      const listings = [...response.data].sort((a, b) => b.id - a.id);
-      return listings;
-    } catch (error) {
-      console.warn("Error fetching listings", error);
-      return [];
-    }
+    const response = await apiClient.get<Listing[]>(
+      `/listings/site/${siteId}`,
+    );
+    return [...response.data].sort((a, b) => b.id - a.id);
   },
+
+  getListings: cache(async (): Promise<Listing[]> => {
+    const response = await apiClient.get<Listing[]>(`/listings`);
+    return [...response.data].sort((a, b) => b.id - a.id);
+  }),
 
   async getListingById(
     listingId: number | string,

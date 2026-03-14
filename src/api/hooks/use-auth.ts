@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { authService } from "@/api/services/auth.service";
-import { LoginData, RegisterData } from "@/api/types/auth";
+import { AuthResponse, LoginData, RegisterData } from "@/api/types/auth";
 import { useRouter } from "@/components/navigation";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
@@ -10,7 +10,12 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: (data: LoginData) => authService.login(data),
-    onSuccess: (data) => {
+    onSuccess: (data: AuthResponse) => {
+      const userData = {
+        name: data.username,
+        role: data.role,
+      };
+      localStorage.setItem("userGM", JSON.stringify(userData));
       Cookies.set("JSESSIONID", data.sessionId, { expires: 7, path: "/" });
       toast.success("Successfully logged in");
       router.push("/");
@@ -29,7 +34,12 @@ export const useRegister = () => {
 
   return useMutation({
     mutationFn: (data: RegisterData) => authService.register(data),
-    onSuccess: (data) => {
+    onSuccess: (data: AuthResponse) => {
+      const userData = {
+        name: data.username,
+        role: data.role,
+      };
+      localStorage.setItem("userGM", JSON.stringify(userData));
       Cookies.set("JSESSIONID", data.sessionId, { expires: 7, path: "/" });
       toast.success("Registration successful");
       router.push("/");
@@ -48,6 +58,7 @@ export const useLogout = () => {
 
   const logout = () => {
     authService.logout();
+    localStorage.removeItem("userGM");
     toast.success("Logged out successfully");
     router.push("/auth/login");
   };

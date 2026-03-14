@@ -6,3 +6,9 @@ export interface Axis {
   siteId: number;
   content: string;
 }
+
+export type AxisTypeDataType = {
+  type: string;
+  name: string;
+  description: string;
+};

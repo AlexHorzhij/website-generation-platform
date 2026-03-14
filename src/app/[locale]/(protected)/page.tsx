@@ -8,15 +8,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
+import { SiteService } from "@/api/services/site-service";
 
 const OverviewPage = async () => {
   const t = await getTranslations("DashboardStats");
+  const statsData = await SiteService.getDashboardStatistics();
 
   const stats = [
-    { label: t("total_sites"), value: 4 },
-    { label: t("total_users"), value: 11 },
-    { label: t("total_listings"), value: 875 },
+    { label: t("total_sites"), value: statsData.totalSites },
+    { label: t("total_users"), value: statsData.totalUsers },
+    { label: t("total_listings"), value: statsData.totalListings },
   ];
+
+  if (!statsData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">

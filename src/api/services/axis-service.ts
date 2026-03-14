@@ -1,5 +1,6 @@
 import apiClient from "@/api/client";
-import { Axis } from "@/api/types/axis";
+import { Axis, AxisTypeDataType } from "@/api/types/axis";
+import { cache } from "react";
 
 export interface UpdateAxisRequest {
   id: number;
@@ -9,24 +10,20 @@ export interface UpdateAxisRequest {
 }
 
 export const AxisService = {
-  async getAxes(): Promise<string[]> {
-    try {
-      const response = await apiClient.get<Axis[]>(`/axes`);
-      const data = new Set(response.data.map((axis) => axis.type));
-      return [...data];
-    } catch (error) {
-      console.warn(`Error fetching axes`, error);
-      return [];
-    }
-  },
+  getAxes: cache(async (): Promise<string[]> => {
+    const response = await apiClient.get<Axis[]>(`/axes`);
+    const data = new Set(response.data.map((axis) => axis.type));
+    return [...data];
+  }),
+
+  getAxeTypes: cache(async (): Promise<AxisTypeDataType[]> => {
+    const response = await apiClient.get<AxisTypeDataType[]>(`/axes/types`);
+    return response.data;
+  }),
+
   async getSiteAxes(siteId: number): Promise<Axis[]> {
-    try {
-      const response = await apiClient.get<Axis[]>(`/axes/site/${siteId}`);
-      return response.data;
-    } catch (error) {
-      console.warn(`Error fetching axes for site ${siteId}`, error);
-      return [];
-    }
+    const response = await apiClient.get<Axis[]>(`/axes/site/${siteId}`);
+    return response.data;
   },
 
   async updateAxis(data: UpdateAxisRequest): Promise<Axis> {
