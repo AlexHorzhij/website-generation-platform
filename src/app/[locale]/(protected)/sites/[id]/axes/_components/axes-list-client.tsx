@@ -11,11 +11,9 @@ import { Loader2, Eye, Pencil, Trash2 } from "lucide-react";
 import { Axis, AxisType } from "@/api/types/axis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { EditAxisDialog } from "./edit-axis-dialog";
 import * as React from "react";
 import { toast } from "sonner";
-import { AxisService } from "@/api/services/axis-service";
 import { TableActions } from "@/components/ui-kit/table/table-actions";
 
 interface AxesListClientProps {
@@ -24,14 +22,7 @@ interface AxesListClientProps {
 
 export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const { data: axes = [], isLoading } = useSiteAxes(siteId);
-  console.log("axes", axes);
   const { data: axesTypes } = useAxeTypes();
-  console.log("axesTypes", axesTypes);
-  const typeDir = {};
-  // axesTypes?.forEach((item) => typeDir[item.type]={..item});
-
-  console.log("axesTypes", axesTypes);
-  console.log("axes", axes);
   const deleteAxis = useDeleteAxis();
   const t = useTranslations("AxesManagement");
 
@@ -92,18 +83,20 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const groupedAxes = axes.reduce(
     (acc, axis) => {
       if (!acc[axis.type]) {
-        acc[axis.type] = [];
+        const typeInfo = axesTypes?.find((t) => t.type === axis.type);
+        acc[axis.type] = {
+          name: typeInfo?.name || axis.type.replace(/_/g, " "),
+          description: typeInfo?.description || "",
+          axes: [],
+        };
       }
-      acc[axis.type].push(axis);
+      acc[axis.type].axes.push(axis);
       return acc;
     },
-    {} as Record<AxisType, Axis[]>,
+    {} as Record<AxisType, { name: string; description: string; axes: Axis[] }>,
   );
 
   const types = Object.keys(groupedAxes).sort();
-  console.log("groupedAxes", groupedAxes);
-
-  AxisService.getAxes();
 
   return (
     <>
@@ -115,24 +108,34 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
           <Accordion type="multiple" className="w-full">
             {types.map((type) => (
               <AccordionItem key={type} value={type}>
-                <AccordionTrigger className="capitalize">
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold">{type.replace(/_/g, " ")}</span>
-                    <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">
-                      {groupedAxes[type].length}
-                    </span>
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex flex-col items-start gap-1 text-left">
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold capitalize">
+                        {groupedAxes[type].name}
+                      </span>
+                      <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        {groupedAxes[type].axes.length}
+                      </span>
+                    </div>
+                    {groupedAxes[type].description && (
+                      <span className="text-sm font-normal text-default-500">
+                        {groupedAxes[type].description}
+                      </span>
+                    )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <ul className="space-y-4 pt-2">
-                    {groupedAxes[type].map((axis) => (
+                    {groupedAxes[type].axes.map((axis) => (
                       <li
                         key={axis.id}
-                        className="p-4 bg-default-50 dark:bg-slate-800 rounded-lg border border-default-200 relative group"
+                        className="py-2 px-4 bg-default-50 dark:bg-slate-800 rounded-lg border border-default-200 relative group"
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-sm font-medium text-default-900 italic">
-                            #{axis.id}
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-default-700 leading-relaxed whitespace-pre-wrap">
+                            <span className="font-bold mr-2">#{axis.id}</span>
+                            <span>{axis.content}</span>
                           </p>
                           <div>
                             <TableActions
@@ -157,9 +160,6 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
                             />
                           </div>
                         </div>
-                        <p className="text-sm text-default-700 leading-relaxed whitespace-pre-wrap">
-                          {axis.content}
-                        </p>
                       </li>
                     ))}
                   </ul>
