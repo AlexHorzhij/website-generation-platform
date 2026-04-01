@@ -45,7 +45,16 @@ export interface CreateSiteRequest {
   themeId: number;
   currency: string;
   description: string;
-  categories: Category[];
+  categories: {
+    name: string;
+    description: string;
+    nameEn?: string;
+    descriptionEn?: string;
+    seoTitle?: string;
+    seoDescription?: string;
+    h1?: string;
+    text?: string;
+  }[];
 }
 
 export interface UpdateSiteRequest {

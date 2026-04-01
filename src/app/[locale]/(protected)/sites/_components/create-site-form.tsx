@@ -55,13 +55,11 @@ export const CreateSiteForm = () => {
     control: form.control,
     name: "categories",
   });
-  console.log("form", fields);
   const onSubmit = async (values: SiteFormValues) => {
     setIsSubmitting(true);
-    console.log("values", values);
     try {
-      const site = await SiteService.createSite(values);
-      console.log("site", site);
+      const { draftCategory, ...siteData } = values;
+      const site = await SiteService.createSite(siteData);
       toast.success("Site created successfully!");
       router.push(`/sites/${site.id}`);
     } catch (error) {
