@@ -312,7 +312,8 @@
     "action_back_to_list": "Back to list",
     "action_add_user": "Add User",
     "axes": "Axes",
-    "site_images": "Images"
+    "site_images": "Images",
+    "site_categories": "Categories"
   },
   "SitesManagement": {
     "title": "Sites Management",
@@ -532,5 +533,30 @@
     "stats_parent_regions": "Parent Regions",
     "stats_sub_regions": "Sub-regions",
     "stats_total": "total"
+  },
+  "CategoriesManagement": {
+    "action_view": "View",
+    "action_view_seo": "SEO Info",
+    "seo_title": "Regional SEO Information",
+    "seo_details": "SEO Details",
+    "no_seo_info": "No regional SEO info found for this category.",
+    "title": "Site Categories",
+    "no_categories_found": "No categories found for this site.",
+    "add_category": "Add Category",
+    "edit_category": "Edit Category",
+    "category_details": "Category Details",
+    "delete_category": "Delete",
+    "stats_total": "Total Categories",
+    "table_name": "Name",
+    "table_description": "Description",
+    "table_actions": "Actions",
+    "field_name": "Name (UA)",
+    "field_name_en": "Name (EN)",
+    "field_description": "Description (UA)",
+    "field_description_en": "Description (EN)",
+    "field_seo_title": "SEO Title",
+    "field_seo_description": "SEO Description",
+    "field_h1": "H1 Tag",
+    "field_text": "Text"
   }
 }

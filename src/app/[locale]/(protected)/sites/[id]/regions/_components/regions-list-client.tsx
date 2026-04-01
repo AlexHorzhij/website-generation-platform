@@ -18,6 +18,7 @@ import { Region } from "@/api/types/site";
 import { cn } from "@/lib/utils";
 import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog";
 import { EditRegionDialog } from "./edit-region-dialog";
+import { TableAccordionRow } from "@/components/ui-kit/table/table-accordion-row";
 
 interface RegionsListClientProps {
   siteId: number;
@@ -113,7 +114,7 @@ export function RegionsListClient({ siteId }: RegionsListClientProps) {
                     <AccordionPrimitive.Header className="flex flex-1">
                       <AccordionPrimitive.Trigger
                         className={cn(
-                          "flex flex-1 items-center justify-between p-4 text-default-900 font-medium transition-all duration-200 [&[data-state=open]>svg]:rotate-180 text-left",
+                          "flex flex-1 items-center justify-between p-4 text-default-900 font-medium transition-all duration-200 [&[data-state=open]>svg]:rotate-180 text-left cursor-pointer",
                         )}
                       >
                         <div className="flex items-center gap-2">
@@ -159,42 +160,25 @@ export function RegionsListClient({ siteId }: RegionsListClientProps) {
                     {children.length > 0 ? (
                       <ul className="divide-y divide-default-100">
                         {children.map((child) => (
-                          <li
+                          <TableAccordionRow
                             key={child.id}
-                            className="px-6 py-3 flex items-center justify-between group hover:bg-default-50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-default-300" />
-                              <span className="font-medium text-default-700">
-                                {child.name}
-                              </span>
-                              <span className="text-[10px] font-mono text-default-400">
-                                {child.code}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-6">
-                              <div className="flex items-center gap-1.5 text-default-500">
-                                <span className="text-[11px] font-semibold">
-                                  {child.listingsCount}
-                                </span>
-                              </div>
-                              <TableActions
-                                actions={[
-                                  {
-                                    label: t("edit_region") || "Edit",
-                                    icon: <Pencil className="w-4 h-4" />,
-                                    onClick: () => handleEditClick(child),
-                                  },
-                                  {
-                                    label: "Delete",
-                                    icon: <Trash2 className="w-4 h-4" />,
-                                    onClick: () => handleDeleteClick(child.id),
-                                    variant: "destructive" as const,
-                                  },
-                                ]}
-                              />
-                            </div>
-                          </li>
+                            title={child.name}
+                            info={child.code}
+                            stats={child.listingsCount}
+                            actions={[
+                              {
+                                label: t("edit_region") || "Edit",
+                                icon: <Pencil className="w-4 h-4" />,
+                                onClick: () => handleEditClick(child),
+                              },
+                              {
+                                label: "Delete",
+                                icon: <Trash2 className="w-4 h-4" />,
+                                onClick: () => handleDeleteClick(child.id),
+                                variant: "destructive" as const,
+                              },
+                            ]}
+                          />
                         ))}
                       </ul>
                     ) : (

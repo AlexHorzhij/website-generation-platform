@@ -3,6 +3,8 @@ import { SiteService } from "@/api/services/site-service";
 import { ListingService } from "@/api/services/listing-service";
 import { siteKeys } from "@/api/hooks/use-sites";
 import ListingsClient from "./_components/listings-client";
+import { ListingsHeaderActions } from "./_components/listings-header-actions";
+import { SitePageLayout } from "../../_components/site-page-layout";
 import { notFound } from "next/navigation";
 
 interface ListingsPageProps {
@@ -14,7 +16,8 @@ interface ListingsPageProps {
 
 const ListingsPage = async ({ params }: ListingsPageProps) => {
   const { id } = await params;
-  const site = await SiteService.getSiteById(Number(id));
+  const siteId = Number(id);
+  const site = await SiteService.getSiteById(siteId);
 
   if (!site) {
     notFound();
@@ -24,11 +27,18 @@ const ListingsPage = async ({ params }: ListingsPageProps) => {
 
   // Prefetch data
   await queryClient.prefetchQuery({
-    queryKey: [...siteKeys.all, "listings", id],
-    queryFn: () => ListingService.getListingsBySiteId(Number(id)),
+    queryKey: [...siteKeys.all, "listings", siteId],
+    queryFn: () => ListingService.getListingsBySiteId(siteId),
   });
 
-  return <ListingsClient site={site} />;
+  return (
+    <SitePageLayout
+      site={site}
+      actionBlock={<ListingsHeaderActions siteId={siteId} />}
+    >
+      <ListingsClient site={site} />
+    </SitePageLayout>
+  );
 };
 
 export default ListingsPage;

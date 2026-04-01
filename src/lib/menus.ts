@@ -123,6 +123,14 @@ export function getSiteMenuList(
           submenus: [],
         },
         {
+          id: "site-categories",
+          href: `${base}/categories`,
+          label: t("site_categories"),
+          active: pathname.startsWith(`${base}/categories`),
+          icon: "heroicons-outline:tag",
+          submenus: [],
+        },
+        {
           id: "site-regions",
           href: `${base}/regions`,
           label: t("site_regions"),

@@ -13,8 +13,29 @@ export interface SiteTheme {
 }
 
 export interface Category {
+  id: number;
   name: string;
   description: string;
+  nameEn: string;
+  descriptionEn: string;
+  siteId: number;
+  seoTitle: string;
+  seoDescription: string;
+  h1: string;
+  text: string;
+}
+
+export interface CreateOrUpdateCategoryRequest {
+  id?: number;
+  name: string;
+  description: string;
+  nameEn: string;
+  descriptionEn: string;
+  siteId: number;
+  seoTitle: string;
+  seoDescription: string;
+  h1: string;
+  text: string;
 }
 
 export interface CreateSiteRequest {
@@ -84,6 +105,15 @@ export interface Region {
   parentName: string;
   childrenCount: number;
   listingsCount: number;
+}
+
+export interface CategorySeoInfo {
+  id: number;
+  seoTitle: string;
+  seoDescription: string;
+  h1: string;
+  text: string;
+  region: string;
 }
 
 export interface DashboardStatistics {

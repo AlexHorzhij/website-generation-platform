@@ -38,7 +38,7 @@ export function RegionsStats({ siteId }: RegionsStatsProps) {
         action={
           <Badge
             color="info"
-            className="text-[10px] h-4 px-1 font-normal opacity-70"
+            className="text-[16px] h-6 px-1 font-normal opacity-70"
           >
             ROOT
           </Badge>

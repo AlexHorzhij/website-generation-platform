@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SiteService } from "@/api/services/site-service";
-import { Region } from "@/api/types/site";
+import { Region, Category, CreateOrUpdateCategoryRequest } from "@/api/types/site";
 import { toast } from "sonner";
 
 export const siteKeys = {
@@ -88,3 +88,70 @@ export function useUpdateRegion(siteId: number) {
   });
 }
 
+export function useSiteCategories(siteId: number) {
+  return useQuery({
+    queryKey: ["categories", siteId],
+    queryFn: () => SiteService.getSiteCategories(siteId),
+    enabled: !!siteId,
+  });
+}
+
+export function useCategory(id: number) {
+  return useQuery({
+    queryKey: ["category", id],
+    queryFn: () => SiteService.getCategoryById(id),
+    enabled: !!id,
+  });
+}
+
+export function useDeleteCategory(siteId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => SiteService.deleteCategory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories", siteId] });
+      toast.success("Category deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete category");
+    },
+  });
+}
+
+export function useCreateCategory(siteId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateOrUpdateCategoryRequest) =>
+      SiteService.createCategory(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories", siteId] });
+      toast.success("Category created successfully");
+    },
+    onError: () => {
+      toast.error("Failed to create category");
+    },
+  });
+}
+
+export function useUpdateCategory(siteId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: CreateOrUpdateCategoryRequest;
+    }) => SiteService.updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories", siteId] });
+      toast.success("Category updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update category");
+    },
+  });
+}

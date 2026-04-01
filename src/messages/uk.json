@@ -313,7 +313,8 @@
     "action_add_user": "Додати користувача",
     "select_region": "Виберіть регіон",
     "axes": "Осі",
-    "site_images": "Зображення"
+    "site_images": "Зображення",
+    "site_categories": "Категорії"
   },
   "SitesManagement": {
     "title": "Керування сайтами",
@@ -533,5 +534,30 @@
     "stats_parent_regions": "Батьківські регіони",
     "stats_sub_regions": "Дочірні регіони",
     "stats_total": "всього"
+  },
+  "CategoriesManagement": {
+    "action_view": "Переглянути",
+    "action_view_seo": "SEO інформація",
+    "seo_title": "Регіональна SEO інформація",
+    "seo_details": "Деталі SEO",
+    "no_seo_info": "Для цієї категорії не знайдено регіональної SEO інформації.",
+    "title": "Категорії сайту",
+    "no_categories_found": "Категорій для цього сайту не знайдено.",
+    "add_category": "Додати категорію",
+    "edit_category": "Редагувати категорію",
+    "category_details": "Деталі категорії",
+    "delete_category": "Видалити",
+    "stats_total": "Всього категорій",
+    "table_name": "Назва",
+    "table_description": "Опис",
+    "table_actions": "Дії",
+    "field_name": "Назва (UA)",
+    "field_name_en": "Назва (EN)",
+    "field_description": "Опис (UA)",
+    "field_description_en": "Опис (EN)",
+    "field_seo_title": "SEO Заголовок",
+    "field_seo_description": "SEO Опис",
+    "field_h1": "Тег H1",
+    "field_text": "Текст"
   }
 }

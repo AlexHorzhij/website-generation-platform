@@ -16,6 +16,7 @@ import * as React from "react";
 import { TableActions } from "@/components/ui-kit/table/table-actions";
 import { CountBadge } from "@/components/ui-kit/count-badge";
 import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog";
+import { TableAccordionRow } from "@/components/ui-kit/table/table-accordion-row";
 
 interface AxesListClientProps {
   siteId: number;
@@ -23,6 +24,7 @@ interface AxesListClientProps {
 
 export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const { data: axes = [], isLoading } = useSiteAxes(siteId);
+  console.log("axes", axes);
   const { data: axesTypes } = useAxeTypes();
   const deleteAxis = useDeleteAxis();
   const t = useTranslations("AxesManagement");
@@ -103,11 +105,15 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
         <CardContent>
           <Accordion type="multiple" className="w-full">
             {types.map((type) => (
-              <AccordionItem key={type} value={type}>
-                <AccordionTrigger className="hover:no-underline">
+              <AccordionItem
+                key={type}
+                value={type}
+                className="border-none mb-4"
+              >
+                <AccordionTrigger className="hover:no-underline bg-default-100 p-4 rounded-md cursor-pointer">
                   <div className="flex flex-col items-start gap-1 text-left">
                     <div className="flex items-center gap-3">
-                      <span className="font-bold capitalize">
+                      <span className="font-bold capitalize text-default-900">
                         {groupedAxes[type].name}
                       </span>
                       <CountBadge count={groupedAxes[type].axes.length} />
@@ -119,42 +125,32 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
                     )}
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-4 pt-2">
+                <AccordionContent className="p-0 border-t border-default-100 bg-default-50/20 dark:bg-slate-900 rounded-b-md">
+                  <ul className="divide-y divide-default-100">
                     {groupedAxes[type].axes.map((axis) => (
-                      <li
+                      <TableAccordionRow
                         key={axis.id}
-                        className="py-2 px-4 bg-default-50 dark:bg-slate-800 rounded-lg border border-default-200 relative group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm text-default-700 leading-relaxed whitespace-pre-wrap">
-                            <span className="font-bold mr-2">#{axis.id}</span>
-                            <span>{axis.content}</span>
-                          </p>
-                          <div>
-                            <TableActions
-                              actions={[
-                                {
-                                  label: t("action_view") || "View",
-                                  icon: <Eye className="w-4 h-4" />,
-                                  onClick: () => handleView(axis),
-                                },
-                                {
-                                  label: t("edit_axis") || "Edit",
-                                  icon: <Pencil className="w-4 h-4" />,
-                                  onClick: () => handleEdit(axis),
-                                },
-                                {
-                                  label: t("action_delete") || "Delete",
-                                  icon: <Trash2 className="w-4 h-4" />,
-                                  onClick: () => handleDelete(axis.id),
-                                  variant: "destructive" as const,
-                                },
-                              ]}
-                            />
-                          </div>
-                        </div>
-                      </li>
+                        title={axis.content}
+                        info={`#${axis.id}`}
+                        actions={[
+                          {
+                            label: t("action_view") || "View",
+                            icon: <Eye className="w-4 h-4" />,
+                            onClick: () => handleView(axis),
+                          },
+                          {
+                            label: t("edit_axis") || "Edit",
+                            icon: <Pencil className="w-4 h-4" />,
+                            onClick: () => handleEdit(axis),
+                          },
+                          {
+                            label: t("action_delete") || "Delete",
+                            icon: <Trash2 className="w-4 h-4" />,
+                            onClick: () => handleDelete(axis.id),
+                            variant: "destructive" as const,
+                          },
+                        ]}
+                      />
                     ))}
                   </ul>
                 </AccordionContent>

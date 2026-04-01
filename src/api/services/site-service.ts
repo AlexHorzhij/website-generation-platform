@@ -1,11 +1,13 @@
 import {
   Category,
+  CreateOrUpdateCategoryRequest,
   CategoryGenerationRequest,
   CreateSiteRequest,
   Region,
   Site,
   UpdateSiteRequest,
   DashboardStatistics,
+  CategorySeoInfo,
 } from "@/api/types/site";
 import apiClient from "@/api/client";
 import { cache } from "react";
@@ -65,6 +67,37 @@ export const SiteService = {
     return response.data;
   },
 
+  async getSiteCategories(siteId: number): Promise<Category[]> {
+    const response = await apiClient.get<Category[]>(
+      `/categories/${siteId}/categories`,
+    );
+    return response.data || [];
+  },
+
+  async createCategory(
+    data: CreateOrUpdateCategoryRequest,
+  ): Promise<Category> {
+    const response = await apiClient.post<Category>(`/categories`, data);
+    return response.data;
+  },
+
+  async updateCategory(
+    id: number,
+    data: CreateOrUpdateCategoryRequest,
+  ): Promise<Category> {
+    const response = await apiClient.put<Category>(`/categories/${id}`, data);
+    return response.data;
+  },
+
+  getCategoryById: cache(async (id: number): Promise<Category | null> => {
+    const response = await apiClient.get<Category>(`/categories/${id}`);
+    return response.data || null;
+  }),
+
+  async deleteCategory(id: number): Promise<void> {
+    await apiClient.delete(`/categories/${id}`);
+  },
+
   async updateAutogenPerDay(id: string, value: number): Promise<void> {
     await apiClient.patch(`/sites/${id}/autogen-per-day`, value, {
       headers: {
@@ -92,5 +125,11 @@ export const SiteService = {
   async updateSite(id: number, data: UpdateSiteRequest): Promise<Site> {
     const response = await apiClient.patch<Site>(`/sites/${id}`, data);
     return response.data;
+  },
+  async getCategorySeoInfo(categoryId: number): Promise<CategorySeoInfo[]> {
+    const response = await apiClient.get<CategorySeoInfo[]>(
+      `/seo-info/category/${categoryId}`,
+    );
+    return response.data || [];
   },
 };
