@@ -7,6 +7,8 @@ import { PageLayout } from "@/components/layouts/page-layout";
 import { EditSiteAction } from "./_components/edit-site-action";
 import { getTranslations } from "next-intl/server";
 
+import { SitePageLayout } from "../_components/site-page-layout";
+
 interface SiteDetailsPageProps {
   params: Promise<{
     locale: string;
@@ -16,30 +18,22 @@ interface SiteDetailsPageProps {
 
 const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
   const { id } = await params;
-  const queryClient = getQueryClient();
   const t = await getTranslations("General");
 
-  // Prefetch data on the server
-  // await queryClient.prefetchQuery({
-  //   queryKey: siteKeys.detail(Number(id)),
-  //   queryFn: () => SiteService.getSiteById(Number(id)),
-  // });
-
   const site = await SiteService.getSiteById(Number(id));
-  const pageTitle = `${site?.marketplaceName} | ${site?.domainName}`;
 
   if (!site) {
     return <div>Site not found</div>;
   }
 
   return (
-    <PageLayout
-      title={pageTitle}
+    <SitePageLayout
+      site={site}
       actionBlock={<EditSiteAction site={site} text={t("edit")} />}
     >
       <SiteDetailsClient site={site} />
       <SiteDetailsPreview site={site} />
-    </PageLayout>
+    </SitePageLayout>
   );
 };
 

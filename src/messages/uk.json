@@ -16,7 +16,9 @@
     "title": "Заголовок",
     "title_en": "Заголовок (English)",
     "domain": "Домен",
-    "site": "Сайт"
+    "site": "Сайт",
+    "delete_dialog_title": "Ви впевнені?",
+    "delete_dialog_description": "Цю дію неможливо скасувати. Це назавжди видалить цей елемент та пов'язані з ним дані."
   },
   "Table": {
     "showing": "Показано",
@@ -304,6 +306,7 @@
     "site_info": "Інфо",
     "site_listings": "Оголошення",
     "site_contacts": "Контакти",
+    "site_regions": "Регіони",
     "site_seo": "SEO",
     "go_back": "Повернутися",
     "action_back_to_list": "До списку",
@@ -336,7 +339,10 @@
     "edit_site": "Редагувати сайт",
     "field_site_name": "Назва сайту",
     "field_site_name_en": "Назва сайту (English)",
-    "field_currency": "Валюта"
+    "field_currency": "Валюта",
+    "switch_site": "Переключити сайт",
+    "find_site": "Знайти сайт...",
+    "no_site_found": "Сайт не знайдено"
   },
   "UsersManagement": {
     "title": "Керування користувачами",
@@ -512,5 +518,20 @@
     "yes": "Так",
     "no": "Ні",
     "no_domains": "Домени не зареєстровані."
+  },
+  "RegionsManagement": {
+    "title": "Керування регіонами",
+    "no_regions_found": "Регіонів для цього сайту не знайдено.",
+    "add_region": "Додати регіон",
+    "edit_region": "Редагувати регіон",
+    "table_name": "Назва",
+    "table_code": "Код",
+    "table_parent": "Батьківський регіон",
+    "table_listings": "Оголошень",
+    "table_actions": "Дії",
+    "stats_root_region": "Основний регіон",
+    "stats_parent_regions": "Батьківські регіони",
+    "stats_sub_regions": "Дочірні регіони",
+    "stats_total": "всього"
   }
 }

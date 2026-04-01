@@ -55,33 +55,33 @@ export function SitesTable() {
     pageSize: 10,
   });
   const columns: ColumnDef<Site>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          color="primary"
-          className="translate-y-[2px] bg-default-100 border-default-200"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          color="primary"
-          className="translate-y-[2px] bg-default-100 border-default-200"
-          onClick={(e) => e.stopPropagation()}
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && "indeterminate")
+    //       }
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label="Select all"
+    //       color="primary"
+    //       className="translate-y-[2px] bg-default-100 border-default-200"
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //       aria-label="Select row"
+    //       color="primary"
+    //       className="translate-y-[2px] bg-default-100 border-default-200"
+    //       onClick={(e) => e.stopPropagation()}
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       accessorKey: "id",
       header: "ID",
@@ -246,7 +246,7 @@ export function SitesTable() {
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
-          <Table>
+          <Table className="border-separate border-spacing-0">
             <TableHeader className="bg-white dark:bg-slate-900 border-y border-default-100">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
@@ -274,8 +274,11 @@ export function SitesTable() {
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    className="h-14 border-b border-default-50 hover:bg-default-50/50 transition-colors"
+                    className="h-14 border-b border-default-50 hover:bg-default-100/70 relative hover:z-10 hover:ring-1 hover:ring-inset hover:ring-default-200 transition-all cursor-pointer"
                     data-state={row.getIsSelected() && "selected"}
+                    onDoubleClick={() =>
+                      router.push(`/${locale}/sites/${row.original.id}`)
+                    }
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="px-6 py-3">

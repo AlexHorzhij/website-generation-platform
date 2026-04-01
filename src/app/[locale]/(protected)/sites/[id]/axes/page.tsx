@@ -1,8 +1,7 @@
 import { AxesListClient } from "./_components/axes-list-client";
 import { AxesHeaderActions } from "./_components/axes-header-actions";
-import { PageLayout } from "@/components/layouts/page-layout";
-import { getTranslations } from "next-intl/server";
-import { getSitePageTitle } from "../../_helpers/getSitePageTitle";
+import { SitePageLayout } from "../../_components/site-page-layout";
+import { SiteService } from "@/api/services/site-service";
 
 interface SiteAxesPageProps {
   params: Promise<{
@@ -13,16 +12,17 @@ interface SiteAxesPageProps {
 
 const SiteAxesPage = async ({ params }: SiteAxesPageProps) => {
   const { id } = await params;
-  const t = await getTranslations("AxesManagement");
-  const siteTitle = await getSitePageTitle(Number(id));
+  const site = await SiteService.getSiteById(Number(id));
+
+  if (!site) return <div>Site not found</div>;
 
   return (
-    <PageLayout
-      title={siteTitle}
+    <SitePageLayout
+      site={site}
       actionBlock={<AxesHeaderActions siteId={Number(id)} />}
     >
       <AxesListClient siteId={Number(id)} />
-    </PageLayout>
+    </SitePageLayout>
   );
 };
 

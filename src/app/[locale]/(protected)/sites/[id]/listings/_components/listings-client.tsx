@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Listing } from "@/api/types/listing";
-import { Site } from "@/api/types/site";
 import { siteKeys } from "@/api/hooks/use-sites";
 import { useListings, useFolders } from "@/api/hooks/use-listings";
 import { ListingService } from "@/api/services/listing-service";
@@ -39,67 +38,37 @@ import { EditableActionBlock } from "@/components/blocks/editable-action-block";
 import { Switch } from "@/components/ui/switch";
 import { Icon } from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import { PageLayout } from "../../../_components/page-layout";
-import { CreateListingFormDialog } from "./create-listing-form-dialog";
-import { EditListingFormDialog } from "./edit-listing-form-dialog";
-import { ActionBtn } from "@/components/ui-kit/table/action-btn";
-
+import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 
 interface ListingsClientProps {
-  site: Site;
+  initialSite: any;
 }
 
-export default function ListingsClient({ site }: ListingsClientProps) {
+export default function ListingsClient({ site }: { site: any }) {
+  const router = useRouter();
   const t = useTranslations("Listings");
+  const { id } = useParams();
+  const queryClient = useQueryClient();
 
   const [isAutogenerationEnabled, setIsAutogenerationEnabled] = useState(
-    site?.autogeneration,
+    site.autogeneration,
   );
-  const [autogenPerDay, setAutogenPerDay] = useState(site?.autogenPerDay ?? 0);
-  const [folder, setFolder] = useState(site?.folder ?? "");
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [autogenPerDay, setAutogenPerDay] = useState(site.autogenPerDay);
+  const [folder, setFolder] = useState(site.folder);
+
+  const { data: listings = [] } = useListings(id as string);
+  const { data: folderList = [] } = useFolders(id as string);
+
   const [listingToDelete, setListingToDelete] = useState<Listing | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { id } = useParams();
-  const router = useRouter();
-
-  const { data: listings = [], isLoading } = useListings(Number(id));
-  const { data: folderList = [] } = useFolders(Number(id));
-
-  const handleCreate = () => {
-    setSelectedListing(null);
-    setIsFormOpen(true);
-  };
-
-  const handleView = (listing: Listing) => {
-    router.push(`/sites/${id}/listings/${listing.id}`);
-  };
-
-  const handleEdit = (listing: Listing) => {
-    setSelectedListing(listing);
-    setIsFormOpen(true);
-  };
-
-  const queryClient = useQueryClient();
   const toggleMutation = useMutation({
     mutationFn: (enabled: boolean) =>
       SiteService.toggleAutogeneration(Number(id), enabled),
     onSuccess: () => {
-      setIsAutogenerationEnabled((prev) => !prev);
+      setIsAutogenerationEnabled((prev: boolean) => !prev);
       queryClient.invalidateQueries({ queryKey: siteKeys.all });
       toast.success("Autogeneration status updated");
     },
@@ -165,96 +134,79 @@ export default function ListingsClient({ site }: ListingsClientProps) {
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => (
-        <div className="text-default-500">{row.getValue("id")}</div>
-      ),
+      cell: ({ row }) => <span className="font-medium">#{row.original.id}</span>,
     },
     {
       accessorKey: "title",
-      header: t("table_title").toUpperCase(),
+      header: t("table_title"),
       cell: ({ row }) => (
-        <div className="font-bold text-default-900 line-clamp-1">
-          {row.getValue("title")}
-        </div>
+        <span className="font-medium text-default-900 leading-relaxed block max-w-[300px] truncate">
+          {row.original.title}
+        </span>
       ),
     },
     {
       accessorKey: "price",
-      header: t("table_price").toUpperCase(),
+      header: t("table_price"),
       cell: ({ row }) => (
-        <div className="font-semibold text-default-900 uppercase">
-          {row.getValue("price") || "0.00"} {site.currency}
-        </div>
+        <span className="font-semibold text-default-700">
+          {row.original.price} {site.currency}
+        </span>
       ),
     },
     {
       accessorKey: "categoryName",
-      header: t("table_category").toUpperCase(),
+      header: t("table_category"),
       cell: ({ row }) => (
-        <Badge color="secondary">{row.getValue("categoryName")}</Badge>
+        <Badge color="default" className="font-normal opacity-80">
+          {row.original.categoryName}
+        </Badge>
       ),
     },
     {
       accessorKey: "status",
-      header: t("table_status").toUpperCase(),
-      cell: ({ row }) => {
-        const status = row.getValue("status") as string;
-        return (
-          <Badge
-            color={status === "active" ? "success" : "warning"}
-            className="capitalize"
-          >
-            {status}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: "viewsCount",
-      header: t("table_views").toUpperCase(),
+      header: t("table_status"),
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5 text-default-600">
-          <Icon icon="heroicons:eye" className="w-4 h-4" />
-          {row.getValue("viewsCount")}
-        </div>
+        <Badge
+          color={row.original.status === "active" ? "success" : "warning"}
+        >
+          {row.original.status}
+        </Badge>
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: t("table_date").toUpperCase(),
+      accessorKey: "viewsCount",
+      header: t("table_views"),
       cell: ({ row }) => (
-        <div className="text-default-500 whitespace-nowrap">
-          {new Date(row.getValue("createdAt")).toLocaleDateString()}
+        <div className="flex items-center gap-1.5 text-default-500">
+          <Eye className="w-4 h-4" />
+          <span className="text-sm font-medium">{row.original.viewsCount}</span>
         </div>
       ),
     },
     {
       id: "actions",
-      header: () => (
-        <div className="text-end">{t("actions").toUpperCase()}</div>
+      header: t("actions"),
+      cell: ({ row }) => (
+        <TableActions
+          actions={[
+            {
+              label: t("action_view"),
+              icon: <Eye className="w-4 h-4" />,
+              onClick: () =>
+                router.push(
+                  `/(protected)/sites/${id}/listings/${row.original.id}`,
+                ),
+            },
+            {
+              label: t("action_delete"),
+              icon: <Trash2 className="w-4 h-4" />,
+              onClick: () => handleDelete(row.original),
+              variant: "destructive",
+            },
+          ]}
+        />
       ),
-      cell: ({ row }) => {
-        const actions = [
-          {
-            label: t("action_view"),
-            icon: <Eye />,
-            onClick: () => handleView(row.original),
-          },
-          {
-            label: t("edit_listing") || "Edit",
-            icon: <Pencil />,
-            onClick: () => handleEdit(row.original),
-          },
-          {
-            label: t("action_delete"),
-            icon: <Trash2 />,
-            onClick: () => handleDelete(row.original),
-            variant: "destructive" as const,
-          },
-        ];
-
-        return <TableActions actions={actions} />;
-      },
     },
   ];
 
@@ -266,32 +218,8 @@ export default function ListingsClient({ site }: ListingsClientProps) {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const PageTitle = site.marketplaceName + " | " + site.domainName;
-
   return (
-    <PageLayout
-      title={PageTitle}
-      actionBlock={
-        <ActionBtn text={t("create_listing")} onClick={handleCreate} />
-      }
-    >
-      <CreateListingFormDialog
-        siteId={Number(id)}
-        isOpen={isFormOpen && !selectedListing}
-        onOpenChange={setIsFormOpen}
-      />
-      {selectedListing && (
-        <EditListingFormDialog
-          siteId={Number(id)}
-          listing={selectedListing}
-          isOpen={isFormOpen && !!selectedListing}
-          onOpenChange={(open) => {
-            setIsFormOpen(open);
-            if (!open) setSelectedListing(null);
-          }}
-        />
-      )}
-
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatisticsBlock
           title={t("stats_total")}
@@ -345,38 +273,32 @@ export default function ListingsClient({ site }: ListingsClientProps) {
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-default-50 border-y border-default-100">
+            <TableHeader className="bg-default-50/50">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="hover:bg-transparent">
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className="h-12 px-6 font-bold text-[11px] uppercase tracking-wider text-default-900"
+                      className="text-default-600 font-bold px-6 py-4"
                     >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
+              {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    className="hover:bg-default-50 transition-colors"
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-default-50/50 transition-colors border-default-100"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="px-6 py-4">
@@ -392,9 +314,9 @@ export default function ListingsClient({ site }: ListingsClientProps) {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center text-default-500 italic"
                   >
-                    No results.
+                    No results found.
                   </TableCell>
                 </TableRow>
               )}
@@ -405,36 +327,17 @@ export default function ListingsClient({ site }: ListingsClientProps) {
         </CardContent>
       </Card>
 
-      <AlertDialog
+      <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              listing <strong>{listingToDelete?.title}</strong> and remove it
-              from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteMutation.isPending}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={(e) => {
-                e.preventDefault();
-                confirmDelete();
-              }}
-              disabled={deleteMutation.isPending}
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </PageLayout>
+        onConfirm={confirmDelete}
+        isPending={deleteMutation.isPending}
+        description={
+          listingToDelete
+            ? `This will permanently delete the listing "${listingToDelete.title}" and remove it from our servers.`
+            : undefined
+        }
+      />
+    </div>
   );
-}
+};

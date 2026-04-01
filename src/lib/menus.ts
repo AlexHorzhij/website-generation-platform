@@ -123,6 +123,14 @@ export function getSiteMenuList(
           submenus: [],
         },
         {
+          id: "site-regions",
+          href: `${base}/regions`,
+          label: t("site_regions"),
+          active: pathname.startsWith(`${base}/regions`),
+          icon: "heroicons-outline:map",
+          submenus: [],
+        },
+        {
           id: "site-contacts",
           href: `${base}/contacts`,
           label: t("site_contacts"),
@@ -158,6 +166,7 @@ export function getSiteMenuList(
     },
   ];
 }
+
 export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {

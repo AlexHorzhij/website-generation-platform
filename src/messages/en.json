@@ -16,7 +16,9 @@
     "title": "Title",
     "title_en": "Title (English)",
     "domain": "Domain",
-    "site": "Site"
+    "site": "Site",
+    "delete_dialog_title": "Are you sure?",
+    "delete_dialog_description": "This action cannot be undone. This will permanently delete this item and remove the related data."
   },
   "Table": {
     "showing": "Showing",
@@ -304,6 +306,7 @@
     "site_info": "Info",
     "site_listings": "Listings",
     "site_contacts": "Contacts",
+    "site_regions": "Regions",
     "site_seo": "SEO",
     "go_back": "Go Back",
     "action_back_to_list": "Back to list",
@@ -335,7 +338,10 @@
     "edit_site": "Edit Site",
     "field_site_name": "Site Name",
     "field_site_name_en": "Site Name (English)",
-    "field_currency": "Currency"
+    "field_currency": "Currency",
+    "switch_site": "Switch Site",
+    "find_site": "Find site...",
+    "no_site_found": "No site found"
   },
   "UsersManagement": {
     "title": "Users Management",
@@ -511,5 +517,20 @@
     "yes": "Yes",
     "no": "No",
     "no_domains": "No domains registered."
+  },
+  "RegionsManagement": {
+    "title": "Regions Management",
+    "no_regions_found": "No regions found for this site.",
+    "add_region": "Add Region",
+    "edit_region": "Edit Region",
+    "table_name": "Name",
+    "table_code": "Code",
+    "table_parent": "Parent Region",
+    "table_listings": "Listings",
+    "table_actions": "Actions",
+    "stats_root_region": "Root Region",
+    "stats_parent_regions": "Parent Regions",
+    "stats_sub_regions": "Sub-regions",
+    "stats_total": "total"
   }
 }

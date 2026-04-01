@@ -13,7 +13,7 @@ export const PageLayout = ({
   description,
 }: {
   children: React.ReactNode;
-  title: string;
+  title: React.ReactNode;
   actionBlock?: React.ReactNode;
   goBackLink?: string;
   description?: string;

@@ -1,4 +1,6 @@
-import React, { useState, useTransition } from "react";
+"use client";
+
+import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,52 +11,58 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "react-hot-toast";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 
-const DeleteConfirmationDialog = ({ open, onClose, onConfirm, defaultToast = true, toastMessage = "Successfully deleted",
-}: {
+interface DeleteConfirmationDialogProps {
   open: boolean;
-  onClose: () => void;
-  onConfirm?: () => Promise<void>;
-  defaultToast?: boolean;
-  toastMessage?: string;
-}) => {
-  const [isPending, startTransition] = useTransition();
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void | Promise<void>;
+  title?: string;
+  description?: string;
+  confirmText?: string;
+  cancelText?: string;
+  isPending?: boolean;
+}
 
-  const handleConfirm = async () => {
-    if (!onConfirm) {
-      onClose();
-      return;
-    }
-    await onConfirm();
-
-    onClose();
-    if (defaultToast) {
-      toast.success(toastMessage, {
-        position: "top-right",
-      });
-    }
-  };
+const DeleteConfirmationDialog = ({
+  open,
+  onOpenChange,
+  onConfirm,
+  title,
+  description,
+  confirmText,
+  cancelText,
+  isPending = false,
+}: DeleteConfirmationDialogProps) => {
+  const t = useTranslations("General");
 
   return (
-    <AlertDialog open={open}>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>{title || t("delete_dialog_title")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            {description || t("delete_dialog_description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending} onClick={() => onOpenChange(false)}>
+            {cancelText || t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
-            className={isPending ? "pointer-events-none" : ""}
-            onClick={() => startTransition(handleConfirm)}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
+            disabled={isPending}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isPending ? "Deleting.." : "Continue"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              confirmText || t("action_delete")
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

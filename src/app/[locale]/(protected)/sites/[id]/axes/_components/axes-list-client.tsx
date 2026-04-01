@@ -13,8 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { EditAxisDialog } from "./edit-axis-dialog";
 import * as React from "react";
-import { toast } from "sonner";
 import { TableActions } from "@/components/ui-kit/table/table-actions";
+import { CountBadge } from "@/components/ui-kit/count-badge";
+import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog";
 
 interface AxesListClientProps {
   siteId: number;
@@ -30,6 +31,9 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isReadOnly, setIsReadOnly] = React.useState(false);
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [axisToDelete, setAxisToDelete] = React.useState<number | null>(null);
+
   const handleEdit = (axis: Axis) => {
     setSelectedAxis(axis);
     setIsReadOnly(false);
@@ -43,24 +47,16 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
   };
 
   const handleDelete = (id: number) => {
-    toast.error("Are you sure?", {
-      description: "This action cannot be undone.",
-      action: {
-        label: "Delete",
-        onClick: async () => {
-          try {
-            await deleteAxis.mutateAsync(id);
-            toast.success("Axis deleted successfully");
-          } catch (error) {
-            toast.error("Failed to delete axis");
-          }
-        },
-      },
-      cancel: {
-        label: "Cancel",
-        onClick: () => {},
-      },
-    });
+    setAxisToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (axisToDelete) {
+      await deleteAxis.mutateAsync(axisToDelete);
+      setIsDeleteDialogOpen(false);
+      setAxisToDelete(null);
+    }
   };
 
   if (isLoading) {
@@ -114,9 +110,7 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
                       <span className="font-bold capitalize">
                         {groupedAxes[type].name}
                       </span>
-                      <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">
-                        {groupedAxes[type].axes.length}
-                      </span>
+                      <CountBadge count={groupedAxes[type].axes.length} />
                     </div>
                     {groupedAxes[type].description && (
                       <span className="text-sm font-normal text-default-500">
@@ -175,6 +169,13 @@ export const AxesListClient = ({ siteId }: AxesListClientProps) => {
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         readOnly={isReadOnly}
+      />
+
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        isPending={deleteAxis.isPending}
       />
     </>
   );

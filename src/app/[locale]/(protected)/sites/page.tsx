@@ -11,7 +11,6 @@ const SitesPage = async () => {
   const t = await getTranslations("SitesManagement");
   const queryClient = getQueryClient();
 
-  // Prefetch data on the server
   await queryClient.prefetchQuery({
     queryKey: siteKeys.lists(),
     queryFn: () => SiteService.getSites(),

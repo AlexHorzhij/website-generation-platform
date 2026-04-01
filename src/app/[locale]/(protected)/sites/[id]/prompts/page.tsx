@@ -1,6 +1,6 @@
 import { PromptsTable } from "@/app/[locale]/(protected)/prompts/_components/prompts-table";
-import { PageLayout } from "@/components/layouts/page-layout";
-import { getSitePageTitle } from "../../_helpers/getSitePageTitle";
+import { SitePageLayout } from "../../_components/site-page-layout";
+import { SiteService } from "@/api/services/site-service";
 
 interface SitePromptsPageProps {
   params: Promise<{
@@ -11,12 +11,14 @@ interface SitePromptsPageProps {
 
 const SitePromptsPage = async ({ params }: SitePromptsPageProps) => {
   const { id } = await params;
-  const siteTitle = await getSitePageTitle(Number(id));
+  const site = await SiteService.getSiteById(Number(id));
+
+  if (!site) return <div>Site not found</div>;
 
   return (
-    <PageLayout title={siteTitle}>
+    <SitePageLayout site={site}>
       <PromptsTable siteId={Number(id)} />
-    </PageLayout>
+    </SitePageLayout>
   );
 };
 

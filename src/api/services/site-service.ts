@@ -18,7 +18,7 @@ export const SiteService = {
 
   getDashboardStatistics: cache(async (): Promise<DashboardStatistics> => {
     const response = await apiClient.get<DashboardStatistics>(
-      "/sites/statistics/dashboard"
+      "/sites/statistics/dashboard",
     );
     return response.data;
   }),
@@ -29,9 +29,28 @@ export const SiteService = {
     return site || null;
   }),
 
-  async getRegions(siteId: number): Promise<Region[]> {
+  async getRegionById(id: number): Promise<Region | null> {
+    const response = await apiClient.get<Region>(`/regions/${id}`);
+    return response.data || null;
+  },
+
+  async getSiteRegions(siteId: number): Promise<Region[]> {
     const response = await apiClient.get<Region[]>(`/regions/site/${siteId}`);
     return response.data || [];
+  },
+
+  async deleteRegion(id: number): Promise<void> {
+    await apiClient.delete(`/regions/${id}`);
+  },
+
+  async createRegion(data: Region): Promise<Region> {
+    const response = await apiClient.post<Region>("/regions", data);
+    return response.data;
+  },
+
+  async updateRegion(id: number, data: Region): Promise<Region> {
+    const response = await apiClient.put<Region>(`/regions/${id}`, data);
+    return response.data;
   },
 
   async createSite(data: CreateSiteRequest): Promise<Site> {

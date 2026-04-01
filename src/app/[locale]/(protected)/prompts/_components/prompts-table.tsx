@@ -44,8 +44,6 @@ export function PromptsTable({ siteId }: PromptsTableProps) {
   const { data: sitePrompts = [], isLoading: isSiteLoading } = useSitePrompts(
     siteId as number,
   );
-  console.log("sitePrompts", sitePrompts);
-  // const [data: sitePrompts] = useSitePrompts(siteId as number);
 
   const data = siteId ? sitePrompts : allPrompts;
   const isLoading = siteId ? isSiteLoading : isAllLoading;

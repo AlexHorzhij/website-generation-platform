@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxisService, UpdateAxisRequest } from "@/api/services/axis-service";
+import { toast } from "sonner";
 
 export const axisKeys = {
   all: ["axes"] as const,
@@ -34,8 +35,12 @@ export function useUpdateAxis() {
 
   return useMutation({
     mutationFn: (data: UpdateAxisRequest) => AxisService.updateAxis(data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: axisKeys.all });
+      toast.success("Axis updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update axis");
     },
   });
 }
@@ -47,6 +52,10 @@ export function useDeleteAxis() {
     mutationFn: (id: number) => AxisService.deleteAxis(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: axisKeys.all });
+      toast.success("Axis deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete axis");
     },
   });
 }
@@ -58,6 +67,11 @@ export function useCreateAxis() {
     mutationFn: (data: UpdateAxisRequest) => AxisService.createAxis(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: axisKeys.all });
+      toast.success("Axis created successfully");
+    },
+    onError: () => {
+      toast.error("Failed to create axis");
     },
   });
 }
+
