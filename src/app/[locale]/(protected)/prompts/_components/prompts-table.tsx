@@ -7,30 +7,17 @@ import {
   PaginationState,
   SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Loader2, Eye, Edit } from "lucide-react";
-import { TablePagination } from "@/components/ui-kit/table/table-pagination";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Eye, Edit } from "lucide-react";
+import { DataTable, TableActions } from "@/components/ui-kit/table";
 import { Prompt } from "@/api/types/prompt";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { TableActions } from "@/components/ui-kit/table/table-actions";
 import { EditPromptDialog } from "./edit-prompt-dialog";
 import { Badge } from "@/components/ui/badge";
 import { usePrompts, useSitePrompts } from "@/api/hooks/use-prompts";
@@ -172,99 +159,23 @@ export function PromptsTable({ siteId }: PromptsTableProps) {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-40">
-        <Loader2 className="animate-spin w-6 h-6 text-primary" />
-      </div>
-    );
-  }
-
   return (
-    <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
-      <CardHeader className="flex flex-row items-center justify-between py-6 px-6 bg-white dark:bg-slate-900">
-        <CardTitle className="text-xl font-bold text-default-900">
-          {t("title")}
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Input
-              placeholder={t("filter_placeholder")}
-              value={
-                (table.getColumn("description")?.getFilterValue() as string) ??
-                ""
-              }
-              onChange={(event) =>
-                table
-                  .getColumn("description")
-                  ?.setFilterValue(event.target.value)
-              }
-              className="w-[220px] h-10 bg-white dark:bg-slate-800 border-default-200 text-sm focus:ring-primary/20"
-            />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-white dark:bg-slate-900 border-y border-default-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                  className="hover:bg-transparent border-none"
-                >
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="h-14 border-b border-default-50 hover:bg-default-50/50 transition-colors"
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="px-6 py-3">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center text-default-400"
-                  >
-                    {t("no_results")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="border-t border-default-100">
-          <TablePagination table={table} totalItems={data.length} />
-        </div>
-      </CardContent>
+    <>
+      <DataTable
+        table={table}
+        totalItems={data.length}
+        title={t("title")}
+        filterColumn="description"
+        filterPlaceholder={t("filter_placeholder")}
+        isLoading={isLoading}
+        noResultsMessage={t("no_results")}
+        onRowClick={
+          siteId
+            ? (row) =>
+                router.push(`/${locale}/sites/${siteId}/prompts/${row.id}`)
+            : (row) => router.push(`/${locale}/prompts/${row.id}`)
+        }
+      />
 
       <EditPromptDialog
         prompt={selectedPrompt}
@@ -272,6 +183,6 @@ export function PromptsTable({ siteId }: PromptsTableProps) {
         onOpenChange={setIsEditDialogOpen}
         siteId={siteId}
       />
-    </Card>
+    </>
   );
 }

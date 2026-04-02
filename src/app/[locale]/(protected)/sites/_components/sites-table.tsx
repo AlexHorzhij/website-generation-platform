@@ -1,42 +1,28 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
 import {
   ColumnDef,
   ColumnFiltersState,
   PaginationState,
   SortingState,
   VisibilityState,
-  flexRender,
+  useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
-import { Eye, Trash2, Loader2 } from "lucide-react";
-import { TablePagination } from "@/components/ui-kit/table/table-pagination";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, Trash2 } from "lucide-react";
+import { DataTable } from "@/components/ui-kit/table/data-table";
+import { TableActions } from "@/components/ui-kit/table/table-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Site } from "@/api/types/site";
-import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
-import { TableActions } from "@/components/ui-kit/table/table-actions";
-
 import { useSites } from "@/api/hooks/use-sites";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
 
 export function SitesTable() {
   const { data = [], isLoading } = useSites();
@@ -54,34 +40,8 @@ export function SitesTable() {
     pageIndex: 0,
     pageSize: 10,
   });
+
   const columns: ColumnDef<Site>[] = [
-    // {
-    //   id: "select",
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       checked={
-    //         table.getIsAllPageRowsSelected() ||
-    //         (table.getIsSomePageRowsSelected() && "indeterminate")
-    //       }
-    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //       aria-label="Select all"
-    //       color="primary"
-    //       className="translate-y-[2px] bg-default-100 border-default-200"
-    //     />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       checked={row.getIsSelected()}
-    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //       aria-label="Select row"
-    //       color="primary"
-    //       className="translate-y-[2px] bg-default-100 border-default-200"
-    //       onClick={(e) => e.stopPropagation()}
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     {
       accessorKey: "id",
       header: "ID",
@@ -219,95 +179,15 @@ export function SitesTable() {
     },
   });
 
-  if (isLoading) {
-    return <Loader2 className="animate-spin" />;
-  }
-
   return (
-    <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
-      <CardHeader className="flex flex-row items-center justify-between py-6 px-6 bg-white dark:bg-slate-900">
-        <CardTitle className="text-xl font-bold text-default-900">
-          {t("table_site_name")}
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Input
-              placeholder={t("filter_placeholder")}
-              value={
-                (table.getColumn("status")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn("status")?.setFilterValue(event.target.value)
-              }
-              className="w-[200px] h-10 bg-white dark:bg-slate-800 border-default-200 text-sm focus:ring-primary/20"
-            />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table className="border-separate border-spacing-0">
-            <TableHeader className="bg-white dark:bg-slate-900 border-y border-default-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                  className="hover:bg-transparent border-none"
-                >
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="h-14 border-b border-default-50 hover:bg-default-100/70 relative hover:z-10 hover:ring-1 hover:ring-inset hover:ring-default-200 transition-all cursor-pointer"
-                    data-state={row.getIsSelected() && "selected"}
-                    onDoubleClick={() =>
-                      router.push(`/${locale}/sites/${row.original.id}`)
-                    }
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="px-6 py-3">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="border-t border-default-100">
-          <TablePagination table={table} totalItems={data.length} />
-        </div>
-      </CardContent>
-    </Card>
+    <DataTable
+      table={table}
+      totalItems={data.length}
+      title={t("table_site_name")}
+      filterColumn="status"
+      filterPlaceholder={t("filter_placeholder")}
+      isLoading={isLoading}
+      onRowClick={(row) => router.push(`/${locale}/sites/${row.id}`)}
+    />
   );
 }

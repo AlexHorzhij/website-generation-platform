@@ -51,6 +51,14 @@ export function getMenuList(pathname: string, t: any): Group[] {
           submenus: [],
         },
         {
+          id: "images",
+          href: "/images",
+          label: t("images"),
+          active: pathname.includes("/images") && !pathname.includes("/sites/"),
+          icon: "heroicons-outline:photograph",
+          submenus: [],
+        },
+        {
           id: "users",
           href: "/users",
           label: t("users"),
@@ -58,22 +66,6 @@ export function getMenuList(pathname: string, t: any): Group[] {
           icon: "heroicons-outline:users",
           submenus: [],
         },
-        // {
-        //   id: "listings",
-        //   href: "/listings",
-        //   label: t("listings"),
-        //   active: pathname.includes("/listings"),
-        //   icon: "heroicons-outline:view-list",
-        //   submenus: [],
-        // },
-        // {
-        //   id: "contacts",
-        //   href: "/contacts",
-        //   label: t("contacts"),
-        //   active: pathname.includes("/contacts"),
-        //   icon: "heroicons-outline:phone",
-        //   submenus: [],
-        // },
         {
           id: "domains",
           href: "/domains",

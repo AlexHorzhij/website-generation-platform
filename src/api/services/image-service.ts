@@ -17,6 +17,32 @@ export const ImageService = {
     }
   },
 
+  async getAllFolders(): Promise<ImageFolderType[]> {
+    try {
+      const response = await apiClient.get<ImageFolderType[]>(
+        `/sites/1/images/folders`,
+      );
+      return response.data;
+    } catch (error) {
+      console.warn(
+        "Backend not available, returning empty folders list",
+        error,
+      );
+      return [];
+    }
+  },
+  async getImages(siteId: number, folderName: string): Promise<any[]> {
+    try {
+      const response = await apiClient.get<any[]>(
+        `/sites/${siteId}/images/folder/${folderName}/images`,
+      );
+      return response.data;
+    } catch (error) {
+      console.warn("Backend not available, returning empty images list", error);
+      return [];
+    }
+  },
+
   async uploadImage(
     siteId: number,
     folderName: string,

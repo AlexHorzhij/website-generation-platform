@@ -7,23 +7,17 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   useReactTable,
   flexRender,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+  PaginationState,
 } from "@tanstack/react-table";
 import { Eye, Trash2, Pencil } from "lucide-react";
 
-import { TableActions } from "@/components/ui-kit/table/table-actions";
-import { TablePagination } from "@/components/ui-kit/table/table-pagination";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable, TableActions } from "@/components/ui-kit/table";
 import { Listing } from "@/api/types/listing";
 import { Site } from "@/api/types/site";
 import { siteKeys } from "@/api/hooks/use-sites";
@@ -52,15 +46,24 @@ interface ListingsClientProps {
 export default function ListingsClient({ site }: ListingsClientProps) {
   const t = useTranslations("Listings");
 
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   const [isAutogenerationEnabled, setIsAutogenerationEnabled] = useState(
     site?.autogeneration,
   );
   const [autogenPerDay, setAutogenPerDay] = useState(site?.autogenPerDay ?? 0);
   const [folder, setFolder] = useState(site?.folder ?? "");
-  
+
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<Listing | null>(null);
 
@@ -246,12 +249,23 @@ export default function ListingsClient({ site }: ListingsClientProps) {
   const table = useReactTable({
     data: listings,
     columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      pagination,
+    },
   });
-
-  const PageTitle = site.marketplaceName + " | " + site.domainName;
 
   return (
     <div className="space-y-6">
@@ -312,73 +326,13 @@ export default function ListingsClient({ site }: ListingsClientProps) {
         />
       </div>
 
-      <Card className="border-none shadow-sm overflow-hidden">
-        <CardHeader className="py-6 px-6">
-          <CardTitle className="text-xl font-bold text-default-900">
-            {t("title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader className="bg-default-50 border-y border-default-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className="h-12 px-6 font-bold text-[11px] uppercase tracking-wider text-default-900"
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="hover:bg-default-50 transition-colors"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="px-6 py-4">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-
-          <TablePagination table={table} totalItems={listings.length} />
-        </CardContent>
-      </Card>
+      <DataTable
+        table={table}
+        totalItems={listings.length}
+        title={t("title")}
+        isLoading={isLoading}
+        onRowClick={(row) => handleView(row)}
+      />
 
       <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
