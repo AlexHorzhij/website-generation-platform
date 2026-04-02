@@ -31,8 +31,10 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
       site={site}
       actionBlock={<EditSiteAction site={site} text={t("edit")} />}
     >
-      <SiteDetailsClient site={site} />
-      <SiteDetailsPreview site={site} />
+      <>
+        <SiteDetailsClient site={site} />
+        <SiteDetailsPreview site={site} />
+      </>
     </SitePageLayout>
   );
 };

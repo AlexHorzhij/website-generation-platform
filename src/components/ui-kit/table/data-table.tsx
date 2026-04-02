@@ -53,10 +53,14 @@ export function DataTable<TData>({
                 <Input
                   placeholder={filterPlaceholder || "Filter..."}
                   value={
-                    (table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""
+                    (table
+                      .getColumn(filterColumn)
+                      ?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
-                    table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+                    table
+                      .getColumn(filterColumn)
+                      ?.setFilterValue(event.target.value)
                   }
                   className="w-[220px] h-10 bg-white dark:bg-slate-800 border-default-200 text-sm focus:ring-primary/20"
                 />
@@ -79,13 +83,18 @@ export function DataTable<TData>({
                     <TableHead
                       key={header.id}
                       className="h-14 px-6 text-default-900 font-bold text-[11px] uppercase tracking-wider bg-white dark:bg-slate-900"
-                      style={{ width: header.getSize() !== 150 ? `${header.getSize()}px` : undefined }}
+                      style={{
+                        width:
+                          header.getSize() !== 150
+                            ? `${header.getSize()}px`
+                            : undefined,
+                      }}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   ))}
@@ -110,21 +119,32 @@ export function DataTable<TData>({
                     key={row.id}
                     className={cn(
                       "h-14 border-b border-default-50 hover:bg-default-100/70 relative hover:z-10 hover:ring-1 hover:ring-inset hover:ring-default-200 transition-all",
-                      (onRowClick || onRowDoubleClick) && "cursor-pointer"
+                      (onRowClick || onRowDoubleClick) && "cursor-pointer",
                     )}
                     data-state={row.getIsSelected() && "selected"}
-                    onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                    onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(row.original) : undefined}
+                    onClick={
+                      onRowClick ? () => onRowClick(row.original) : undefined
+                    }
+                    onDoubleClick={
+                      onRowDoubleClick
+                        ? () => onRowDoubleClick(row.original)
+                        : undefined
+                    }
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell 
-                        key={cell.id} 
+                      <TableCell
+                        key={cell.id}
                         className="px-6 py-3"
-                        style={{ width: cell.column.getSize() !== 150 ? `${cell.column.getSize()}px` : undefined }}
+                        style={{
+                          width:
+                            cell.column.getSize() !== 150
+                              ? `${cell.column.getSize()}px`
+                              : undefined,
+                        }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}
@@ -145,7 +165,9 @@ export function DataTable<TData>({
         </div>
 
         <div className="border-t border-default-100 bg-white dark:bg-slate-900">
-          <TablePagination table={table} totalItems={totalItems} />
+          {totalItems > 10 && (
+            <TablePagination table={table} totalItems={totalItems} />
+          )}
         </div>
       </CardContent>
     </Card>

@@ -19,9 +19,7 @@ export const ImageService = {
 
   async getAllFolders(): Promise<ImageFolderType[]> {
     try {
-      const response = await apiClient.get<ImageFolderType[]>(
-        `/sites/1/images/folders`,
-      );
+      const response = await apiClient.get<ImageFolderType[]>(`/folders`);
       return response.data;
     } catch (error) {
       console.warn(
@@ -34,7 +32,7 @@ export const ImageService = {
   async getImages(siteId: number, folderName: string): Promise<any[]> {
     try {
       const response = await apiClient.get<any[]>(
-        `/sites/${siteId}/images/folder/${folderName}/images`,
+        `/folders/${folderName}/images`,
       );
       return response.data;
     } catch (error) {
@@ -75,6 +73,6 @@ export const ImageService = {
   },
 
   async deleteFolder(siteId: number, folderName: string): Promise<void> {
-    await apiClient.delete(`/sites/${siteId}/images/folder/${folderName}`);
+    await apiClient.delete(`/folders/${folderName}`);
   },
 };

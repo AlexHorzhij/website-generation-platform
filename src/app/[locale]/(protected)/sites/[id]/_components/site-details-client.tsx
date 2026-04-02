@@ -38,7 +38,6 @@ const SiteDetailsClient = async ({ site }: SiteDetailsClientProps) => {
 
   return (
     <>
-      {" "}
       {/* New Header Widget */}
       <SiteHeaderWidget site={site} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

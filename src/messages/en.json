@@ -558,7 +558,8 @@
     "field_seo_title": "SEO Title",
     "field_seo_description": "SEO Description",
     "field_h1": "H1 Tag",
-    "field_text": "Text"
+    "field_text": "Text",
+    "filter_placeholder": "Filter categories..."
   },
   "ImagesManagement": {
     "title": "Site Images",
@@ -582,6 +583,7 @@
     "delete_folder_error": "Error deleting folder",
     "no_folder_selected": "No folder selected",
     "no_images_found": "No images found",
+    "delete_folder_title": "Delete folder",
     "table_folder_name": "Folder name",
     "table_actions": "Actions",
     "folders_table_title": "Images folders list",

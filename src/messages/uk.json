@@ -559,7 +559,8 @@
     "field_seo_title": "SEO Заголовок",
     "field_seo_description": "SEO Опис",
     "field_h1": "Тег H1",
-    "field_text": "Текст"
+    "field_text": "Текст",
+    "filter_placeholder": "Шукати категорію..."
   },
   "ImagesManagement": {
     "title": "Зображення сайту",
@@ -583,6 +584,7 @@
     "delete_folder_error": "Помилка при видаленні папки",
     "no_folder_selected": "Папка не вибрана",
     "no_images_found": "Зображень не знайдено",
+    "delete_folder_title": "Видалити папку",
     "table_folder_name": "Назва папки",
     "table_actions": "Дії",
     "folders_table_title": "Список папок зображень",

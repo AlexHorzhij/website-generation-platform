@@ -4,13 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { ImageType } from "@/api/types/images";
 
 interface ImageCardProps {
-  image: {
-    s3Url: string;
-    fileName?: string;
-    id?: number;
-  };
+  image: ImageType;
   index: number;
   onView?: (image: any) => void;
   onDelete?: (image: any) => void;
@@ -24,7 +22,6 @@ export function ImageCard({
   onDelete,
   className,
 }: ImageCardProps) {
-  console.log("image", image);
   return (
     <Card
       className={cn(
@@ -32,10 +29,12 @@ export function ImageCard({
         className,
       )}
     >
-      <img
+      <Image
         src={image.s3Url}
         alt={image.fileName || `Image ${index}`}
-        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+        fill
+        unoptimized
+        className="object-cover transition-transform duration-300 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
         {onView && (
