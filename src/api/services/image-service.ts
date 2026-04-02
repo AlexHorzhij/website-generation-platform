@@ -2,11 +2,9 @@ import apiClient from "@/api/client";
 import { ImageFolderType } from "@/api/types/images";
 
 export const ImageService = {
-  async getFolders(siteId: number): Promise<ImageFolderType[]> {
+  async getFolders(): Promise<ImageFolderType[]> {
     try {
-      const response = await apiClient.get<ImageFolderType[]>(
-        `/sites/${siteId}/images/folders`,
-      );
+      const response = await apiClient.get<ImageFolderType[]>(`/folders`);
       return response.data;
     } catch (error) {
       console.warn(
@@ -68,8 +66,8 @@ export const ImageService = {
     return response.data;
   },
 
-  async deleteImage(siteId: number, imageId: number): Promise<void> {
-    await apiClient.delete(`/sites/${siteId}/images/${imageId}`);
+  async deleteImage(imageId: number): Promise<void> {
+    await apiClient.delete(`/sites/images/${imageId}`);
   },
 
   async deleteFolder(siteId: number, folderName: string): Promise<void> {

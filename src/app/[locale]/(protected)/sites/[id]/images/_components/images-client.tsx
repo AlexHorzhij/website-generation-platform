@@ -1,21 +1,15 @@
 "use client";
 
-import {
-  useImagesFolders,
-  useDeleteFolder,
-  useImages,
-} from "@/api/hooks/use-images";
+import { useImages, useDeleteImage } from "@/api/hooks/use-images";
 import { Site } from "@/api/types/site";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
-import { Trash2, Eye } from "lucide-react";
 import DeleteConfirmationDialog from "@/components/delete-confirmation-dialog";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageGrid } from "@/components/image-grid";
+import { toast } from "sonner";
 
 interface ImagesClientProps {
   site: Site;
@@ -26,11 +20,38 @@ export default function ImagesClient({ site, folderName }: ImagesClientProps) {
   const { id } = useParams();
   const siteId = Number(id);
   const t = useTranslations("ImagesManagement");
-
-  console.log("folderName", folderName);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<any>(null);
 
   const { data: images = [], isLoading } = useImages(siteId, folderName || "");
-  console.log("images", images);
+  const deleteMutation = useDeleteImage();
+
+  const handleView = (image: any) => {
+    if (image.s3Url) {
+      window.open(image.s3Url, "_blank");
+    }
+  };
+
+  const handleDeleteRequest = (image: any) => {
+    setImageToDelete(image);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (imageToDelete?.id) {
+      deleteMutation.mutate(
+        { imageId: imageToDelete.id },
+        {
+          onSuccess: () => {
+             setIsDeleteDialogOpen(false);
+             setImageToDelete(null);
+             toast.success(t("delete_image_success"));
+          },
+        }
+      );
+    }
+  };
+
   if (!folderName) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-default-400 bg-white rounded-xl shadow-sm border border-default-100">
@@ -60,11 +81,23 @@ export default function ImagesClient({ site, folderName }: ImagesClientProps) {
   }
 
   return (
-    <ImageGrid
-      images={images}
-      isLoading={isLoading}
-      onView={(image) => console.log("View", image)}
-      onDelete={(image) => console.log("Delete", image)}
-    />
+    <>
+      <ImageGrid
+        images={images}
+        isLoading={isLoading}
+        onView={handleView}
+        onDelete={handleDeleteRequest}
+      />
+
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        isPending={deleteMutation.isPending}
+        title={t("delete_image_title")}
+        description={t("delete_image_description")}
+      />
+    </>
   );
 }
+

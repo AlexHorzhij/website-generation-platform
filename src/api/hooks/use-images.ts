@@ -11,13 +11,13 @@ export const imageKeys = {
     [...imageKeys.folders(siteId), "images", folderName] as const,
 };
 
-export function useImagesFolders(siteId: number | string) {
-  return useQuery({
-    queryKey: imageKeys.folders(siteId),
-    queryFn: () => ImageService.getFolders(Number(siteId)),
-    enabled: !!siteId,
-  });
-}
+// export function useImagesFolders(siteId: number | string) {
+//   return useQuery({
+//     queryKey: imageKeys.folders(siteId),
+//     queryFn: () => ImageService.getFolders(Number(siteId)),
+//     enabled: !!siteId,
+//   });
+// }
 
 export function useAllFolders() {
   return useQuery({
@@ -73,6 +73,17 @@ export function useDeleteFolder() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: imageKeys.folders(variables.siteId),
+      });
+    },
+  });
+}
+export function useDeleteImage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ imageId }: { imageId: number }) => ImageService.deleteImage(imageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: imageKeys.all,
       });
     },
   });

@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DialogModal } from "@/components/ui-kit/table/dialog-modal";
-import { useImagesFolders, useUploadImage } from "@/api/hooks/use-images";
+import { useAllFolders, useUploadImage } from "@/api/hooks/use-images";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -45,7 +45,7 @@ export function UploadImagesDialog({
 }: UploadImagesDialogProps) {
   const t = useTranslations("ImagesManagement");
   const uploadMutation = useUploadImage();
-  const { data: folders = [] } = useImagesFolders(siteId);
+  const { data: folders = [] } = useAllFolders();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,7 +63,6 @@ export function UploadImagesDialog({
       });
     }
   }, [open, defaultFolder, form]);
-
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const fileList = values.files as FileList;
