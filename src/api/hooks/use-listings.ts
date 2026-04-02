@@ -39,7 +39,7 @@ export function useListing(listingId: number | string) {
 export function useFolders(siteId: number | string) {
   return useQuery({
     queryKey: listingKeys.folders(siteId),
-    queryFn: () => ImageService.getFolders(Number(siteId)),
+    queryFn: () => ImageService.getFolders(),
     enabled: !!siteId,
   });
 }
