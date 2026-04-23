@@ -8,6 +8,7 @@ import {
   UpdateSiteRequest,
   DashboardStatistics,
   CategorySeoInfo,
+  SiteMetadata,
 } from "@/api/types/site";
 import apiClient from "@/api/client";
 import { cache } from "react";
@@ -22,6 +23,10 @@ export const SiteService = {
     const response = await apiClient.get<DashboardStatistics>(
       "/sites/statistics/dashboard",
     );
+    return response.data;
+  }),
+  getSiteMetadata: cache(async (): Promise<SiteMetadata> => {
+    const response = await apiClient.get<SiteMetadata>("/sites/metadata");
     return response.data;
   }),
 

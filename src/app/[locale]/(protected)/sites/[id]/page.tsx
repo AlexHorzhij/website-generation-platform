@@ -17,8 +17,8 @@ interface SiteDetailsPageProps {
 }
 
 const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
-  const { id } = await params;
-  const t = await getTranslations("General");
+  const { id, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "General" });
 
   const site = await SiteService.getSiteById(Number(id));
 
@@ -31,10 +31,10 @@ const SiteDetailsPage = async ({ params }: SiteDetailsPageProps) => {
       site={site}
       actionBlock={<EditSiteAction site={site} text={t("edit")} />}
     >
-      <>
-        <SiteDetailsClient site={site} />
-        <SiteDetailsPreview site={site} />
-      </>
+      <div className="space-y-6">
+        <SiteDetailsClient site={site} locale={locale} />
+        <SiteDetailsPreview site={site} locale={locale} />
+      </div>
     </SitePageLayout>
   );
 };

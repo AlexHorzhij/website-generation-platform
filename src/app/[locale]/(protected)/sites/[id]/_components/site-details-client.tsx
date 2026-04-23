@@ -11,14 +11,15 @@ import { getTranslations } from "next-intl/server";
 
 interface SiteDetailsClientProps {
   site: Site;
+  locale: string;
 }
 
-const SiteDetailsClient = async ({ site }: SiteDetailsClientProps) => {
+const SiteDetailsClient = async ({ site, locale }: SiteDetailsClientProps) => {
   // const { data: listings, isLoading: isListingsLoading } = useListings(
   //   Number(site.id),
   // );
   const listings = await ListingService.getListingsBySiteId(Number(site.id));
-  const t = await getTranslations("SiteDetails");
+  const t = await getTranslations({ locale, namespace: "SiteDetails" });
 
   // if (isListingsLoading) {
   //   return (

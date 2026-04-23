@@ -7,8 +7,13 @@ import { siteKeys } from "@/api/hooks/use-sites";
 import { PageLayout } from "./_components/page-layout";
 import { ActionBtn } from "@/components/ui-kit/table/action-btn";
 
-const SitesPage = async () => {
-  const t = await getTranslations("SitesManagement");
+interface SitesPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+const SitesPage = async ({ params }: SitesPageProps) => {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "SitesManagement" });
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

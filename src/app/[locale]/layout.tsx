@@ -8,13 +8,18 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 // language
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import QueryProvider from "@/providers/query-provider";
+import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Dashcode admin Template",
   description: "created by codeshaper",
 };
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export default async function RootLayout({
   children,
@@ -24,6 +29,7 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const messages = await getMessages();
   return (
     <html lang={locale} suppressHydrationWarning>

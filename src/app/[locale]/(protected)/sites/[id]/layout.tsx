@@ -2,6 +2,17 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
 import { siteKeys } from "@/api/hooks/use-sites";
 import { SiteService } from "@/api/services/site-service";
+import { routing } from "@/i18n/routing";
+
+export async function generateStaticParams() {
+  const sites = await SiteService.getSites();
+  return routing.locales.flatMap((locale) =>
+    sites.map((site) => ({
+      locale,
+      id: String(site.id),
+    })),
+  );
+}
 
 interface SiteLayoutProps {
   children: React.ReactNode;

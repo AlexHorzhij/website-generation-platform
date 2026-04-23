@@ -5,6 +5,17 @@ import { domainKeys } from "@/api/hooks/use-domains";
 import { DomainDashboardClient } from "./_components/domain-dashboard-client";
 import { PageLayout } from "@/components/layouts/page-layout";
 import { getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
+
+export async function generateStaticParams() {
+  const domains = await DomainService.getDomains();
+  return routing.locales.flatMap((locale) =>
+    domains.map((domain) => ({
+      locale,
+      domainName: domain.domainName,
+    })),
+  );
+}
 
 interface DomainDetailPageProps {
   params: Promise<{
@@ -14,10 +25,8 @@ interface DomainDetailPageProps {
 }
 
 const DomainDetailPage = async ({ params }: DomainDetailPageProps) => {
-  const { domainName } = await params;
-  // const decoded = decodeURIComponent(domainName);
-  const decoded = "tutorscoach.com";
-  console.log("decoded", decoded);
+  const { domainName, locale } = await params;
+  const decoded = decodeURIComponent(domainName);
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({
@@ -30,7 +39,7 @@ const DomainDetailPage = async ({ params }: DomainDetailPageProps) => {
     queryFn: () => DomainService.getDomainDashboard(decoded),
   });
 
-  const t = await getTranslations("DomainDetails");
+  const t = await getTranslations({ locale, namespace: "DomainDetails" });
   const pageTitle = `${t("mode_label")}:${data?.mode}`;
 
   return (

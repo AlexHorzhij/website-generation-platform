@@ -3,6 +3,7 @@ import { SiteService } from "@/api/services/site-service";
 import { PageLayout } from "@/components/layouts/page-layout";
 import { getTranslations } from "next-intl/server";
 import { CategorySeoClient } from "../_components/category-seo-client";
+import { routing } from "@/i18n/routing";
 
 interface CategorySeoPageProps {
   params: Promise<{
@@ -10,6 +11,26 @@ interface CategorySeoPageProps {
     id: string;
     categoryId: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  const sites = await SiteService.getSites();
+  const locales = routing.locales;
+
+  const params = await Promise.all(
+    sites.map(async (site) => {
+      const categories = await SiteService.getSiteCategories(site.id);
+      return locales.flatMap((locale) =>
+        categories.map((category) => ({
+          locale,
+          id: String(site.id),
+          categoryId: String(category.id),
+        })),
+      );
+    }),
+  );
+
+  return params.flat();
 }
 
 const CategorySeoPage = async ({ params }: CategorySeoPageProps) => {

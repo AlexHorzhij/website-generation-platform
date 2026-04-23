@@ -6,8 +6,13 @@ import { imageKeys } from "@/api/hooks/use-images";
 import { PageLayout } from "@/app/[locale]/(protected)/sites/_components/page-layout";
 import ImagesFoldersClient from "./_components/images-folders-client";
 
-const AllImagesPage = async () => {
-  const t = await getTranslations("ImagesManagement");
+interface AllImagesPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+const AllImagesPage = async ({ params }: AllImagesPageProps) => {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "ImagesManagement" });
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

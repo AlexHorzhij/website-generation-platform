@@ -9,7 +9,15 @@ export const siteKeys = {
   details: () => [...siteKeys.all, "detail"] as const,
   detail: (id: number) => [...siteKeys.details(), id] as const,
   folders: (id: number) => [...siteKeys.all, "folders", id] as const,
+  metadata: () => [...siteKeys.all, "metadata"] as const,
 };
+
+export function useSiteMetadata() {
+  return useQuery({
+    queryKey: siteKeys.metadata(),
+    queryFn: () => SiteService.getSiteMetadata(),
+  });
+}
 
 export function useSites() {
   return useQuery({

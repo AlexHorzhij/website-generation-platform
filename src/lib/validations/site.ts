@@ -6,6 +6,7 @@ export const createSiteFormSchema = z.object({
   region: z.string().min(2, "Region is required"),
   themeId: z.coerce.number().int().min(1, "Theme is required"),
   currency: z.string().min(2, "Currency is required"),
+  language: z.string().min(2, "Language is required"),
   description: z
     .string()
     .min(10, "Description should be at least 10 characters"),
@@ -16,7 +17,8 @@ export const createSiteFormSchema = z.object({
         description: z.string().min(1, "Category description is required"),
       }),
     )
-    .min(1, "At least one category is required"),
+    .optional()
+    .nullable(),
   draftCategory: z
     .object({
       name: z.string(),

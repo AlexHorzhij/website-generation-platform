@@ -1,6 +1,8 @@
 import { PageLayout } from "@/components/layouts/page-layout";
 import { getTranslations } from "next-intl/server";
 import { PromptDetailClient } from "./_components/prompt-detail-client";
+import { routing } from "@/i18n/routing";
+import { PromptService } from "@/api/services/prompt-service";
 
 interface PromptDetailPageProps {
   params: Promise<{
@@ -9,9 +11,19 @@ interface PromptDetailPageProps {
   }>;
 }
 
+export async function generateStaticParams() {
+  const prompts = await PromptService.getPrompts();
+  return routing.locales.flatMap((locale) =>
+    prompts.map((prompt) => ({
+      locale,
+      id: String(prompt.id),
+    })),
+  );
+}
+
 const PromptDetailPage = async ({ params }: PromptDetailPageProps) => {
-  const { id } = await params;
-  const t = await getTranslations("PromptsManagement");
+  const { id, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "PromptsManagement" });
 
   return (
     <PageLayout title={`${t("details_title")} #${id}`} goBackLink="/prompts">

@@ -5,10 +5,14 @@ import { getTranslations } from "next-intl/server";
 
 interface SiteDetailsPreviewProps {
   site: Site;
+  locale: string;
 }
 
-export async function SiteDetailsPreview({ site }: SiteDetailsPreviewProps) {
-  const t = await getTranslations("SitesManagement");
+export async function SiteDetailsPreview({
+  site,
+  locale,
+}: SiteDetailsPreviewProps) {
+  const t = await getTranslations({ locale, namespace: "SitesManagement" });
 
   return (
     <Card className="border-none shadow-sm bg-white dark:bg-slate-900 mt-6">

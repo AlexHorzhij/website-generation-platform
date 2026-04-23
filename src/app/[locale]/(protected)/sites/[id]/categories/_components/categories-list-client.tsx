@@ -133,30 +133,30 @@ export function CategoriesListClient({ siteId }: CategoriesListClientProps) {
         );
       },
     },
-    {
-      accessorKey: "descriptionEn",
-      header: t("field_description_en").toUpperCase(),
-      size: 400,
-      cell: ({ row }) => {
-        const text = (row.getValue("descriptionEn") as string) || "—";
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-default-600 text-sm line-clamp-2">
-                  {text}
-                </div>
-              </TooltipTrigger>
-              {text.length > 150 && (
-                <TooltipContent className="max-w-[400px] border-none shadow-xl bg-slate-800 text-white p-3 rounded-lg leading-relaxed">
-                  {text}
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
-        );
-      },
-    },
+    // {
+    //   accessorKey: "descriptionEn",
+    //   header: t("field_description_en").toUpperCase(),
+    //   size: 400,
+    //   cell: ({ row }) => {
+    //     const text = (row.getValue("descriptionEn") as string) || "—";
+    //     return (
+    //       <TooltipProvider>
+    //         <Tooltip>
+    //           <TooltipTrigger asChild>
+    //             <div className="text-default-600 text-sm line-clamp-2">
+    //               {text}
+    //             </div>
+    //           </TooltipTrigger>
+    //           {text.length > 150 && (
+    //             <TooltipContent className="max-w-[400px] border-none shadow-xl bg-slate-800 text-white p-3 rounded-lg leading-relaxed">
+    //               {text}
+    //             </TooltipContent>
+    //           )}
+    //         </Tooltip>
+    //       </TooltipProvider>
+    //     );
+    //   },
+    // },
     {
       id: "actions",
       size: 150,

@@ -1,10 +1,10 @@
-import { getTranslations } from "next-intl/server";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { ImageService } from "@/api/services/image-service";
 import { imageKeys } from "@/api/hooks/use-images";
 import { PageLayout } from "@/app/[locale]/(protected)/sites/_components/page-layout";
 import FolderImagesClient from "./_components/folder-images-client";
+import { routing } from "@/i18n/routing";
 
 interface FolderImagesPageProps {
   params: Promise<{
@@ -13,9 +13,18 @@ interface FolderImagesPageProps {
   }>;
 }
 
+export async function generateStaticParams() {
+  const folders = await ImageService.getAllFolders();
+  return routing.locales.flatMap((locale) =>
+    folders.map((folder) => ({
+      locale,
+      folderName: folder.name,
+    })),
+  );
+}
+
 const FolderImagesPage = async ({ params }: FolderImagesPageProps) => {
   const { folderName } = await params;
-  const t = await getTranslations("ImagesManagement");
   const queryClient = getQueryClient();
 
   // Using siteId 1 as in global service for now

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createSiteFormSchema,
@@ -18,47 +18,45 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiteService } from "@/api/services/site-service";
 import { useRouter } from "@/components/navigation";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Wand2, Sparkles, Pencil } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { CategoryEditDialog } from "./category-edit-dialog";
+import { Loader2, Info } from "lucide-react";
+import { useSiteMetadata } from "@/api/hooks/use-sites";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const CreateSiteForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [prompt, setPrompt] = useState("");
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [aiCategories, setAiCategories] = useState<
-    { name: string; description: string }[]
-  >([]);
-
+  const { data: metadata, isLoading: isMetadataLoading } = useSiteMetadata();
+  console.log("metadata", metadata);
   const form = useForm<SiteFormValues>({
     resolver: zodResolver(createSiteFormSchema),
     defaultValues: {
       domainName: "",
       siteName: "",
-      region: "Ukraine",
-      themeId: 1,
-      currency: "UAH",
+      region: "",
+      themeId: 0,
+      currency: "",
+      language: "UKRAINIAN",
       description: "",
-      categories: [],
+      categories: null,
     },
   });
 
-  const { fields, prepend, remove, update } = useFieldArray({
-    control: form.control,
-    name: "categories",
-  });
   const onSubmit = async (values: SiteFormValues) => {
     setIsSubmitting(true);
+    values.language = "uk";
     try {
-      const { draftCategory, ...siteData } = values;
+      const { categories, ...siteData } = values;
       const site = await SiteService.createSite(siteData);
       toast.success("Site created successfully!");
       router.push(`/sites/${site.id}`);
@@ -70,52 +68,38 @@ export const CreateSiteForm = () => {
     }
   };
 
-  const onAddManually = () => {
-    form.setValue("draftCategory", { name: "", description: "" });
-    setEditingIndex(-1);
-  };
-
-  const handleGenerateCategories = async () => {
-    const isValid = await form.trigger(["siteName", "description"]);
-
-    if (!isValid) {
-      toast.error("Please fill in site name and description first");
-      return;
-    }
-
-    const { siteName, description, region } = form.getValues();
-    setIsGenerating(true);
-    try {
-      const generated = await SiteService.generateCategories({
-        siteName,
-        description,
-        region,
-        prompt: prompt || "Generate relevant categories for this site",
-      });
-
-      if (generated && generated.length > 0) {
-        setAiCategories(generated);
-        toast.success("Categories generated successfully!");
-      }
-    } catch (error) {
-      toast.error("Failed to generate categories");
-      console.error(error);
-    } finally {
-      setIsGenerating(false);
+  const handleDomainChange = (domainName: string) => {
+    const selectedDomain = metadata?.availableDomains.find(
+      (d) => d.domainName === domainName,
+    );
+    if (selectedDomain) {
+      form.setValue("domainName", domainName);
+      form.setValue("currency", selectedDomain.currency);
     }
   };
 
-  const handleSelectCategory = (
-    category: { name: string; description: string },
-    index: number,
-  ) => {
-    prepend(category);
-    setAiCategories((prev) => prev.filter((_, i) => i !== index));
-  };
+  if (isMetadataLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <Card className="lg:col-span-2">
+    <div className="max-w-3xl mx-auto space-y-6">
+      {metadata?.noDomains && (
+        <Alert color="destructive">
+          <Info className="h-4 w-4" />
+          <AlertTitle>No Domains Available</AlertTitle>
+          <AlertDescription>
+            There are currently no domains available for site creation. Please
+            contact support.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <Card>
         <CardHeader>
           <CardTitle>Site Details</CardTitle>
         </CardHeader>
@@ -142,25 +126,87 @@ export const CreateSiteForm = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Domain Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="example.com" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={handleDomainChange}
+                        defaultValue={field.value}
+                        disabled={metadata?.noDomains}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a domain" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {metadata?.availableDomains.map((domain) => (
+                            <SelectItem
+                              key={domain.domainName}
+                              value={domain.domainName}
+                            >
+                              {domain.domainName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="region"
+                  name="themeId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Region</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ukraine" {...field} />
-                      </FormControl>
+                      <FormLabel>Theme</FormLabel>
+                      <Select
+                        onValueChange={(val) => field.onChange(Number(val))}
+                        value={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a theme" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {metadata?.themes.map((theme) => (
+                            <SelectItem
+                              key={theme.id}
+                              value={theme.id.toString()}
+                            >
+                              {theme.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Language</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select language" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {metadata?.languages.map((lang) => (
+                            <SelectItem key={lang} value={lang}>
+                              {lang}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -180,12 +226,12 @@ export const CreateSiteForm = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="themeId"
+                  name="region"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Theme ID</FormLabel>
+                      <FormLabel>Region</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input placeholder="eu-central-1" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -211,114 +257,6 @@ export const CreateSiteForm = () => {
                 )}
               />
 
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      Selected Categories
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Add categories manually or select from suggestions.
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-8 gap-1"
-                    onClick={onAddManually}
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Add Manually
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  <AnimatePresence mode="popLayout">
-                    {fields.map((field, index) => {
-                      const categoryName = form.watch(
-                        `categories.${index}.name`,
-                      );
-                      const categoryDesc = form.watch(
-                        `categories.${index}.description`,
-                      );
-
-                      return (
-                        <motion.div
-                          key={field.id}
-                          initial={{ opacity: 0, x: -20, filter: "blur(10px)" }}
-                          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                          exit={{
-                            opacity: 0,
-                            scale: 0.95,
-                            filter: "blur(10px)",
-                          }}
-                          layout
-                          className="group relative bg-card border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300"
-                        >
-                          <div className="p-4 flex items-center gap-4">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-sm truncate">
-                                {categoryName || "Untitled Category"}
-                              </h4>
-                              <p className="text-xs text-muted-foreground line-clamp-1">
-                                {categoryDesc || "No description provided"}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all"
-                                onClick={() => {
-                                  form.setValue("draftCategory", {
-                                    name: categoryName,
-                                    description: categoryDesc,
-                                  });
-                                  setEditingIndex(index);
-                                }}
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-full transition-all"
-                                onClick={() => remove(index)}
-                                disabled={fields.length === 0}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="absolute left-0 bottom-0 top-0 w-1 bg-primary/20 group-hover:bg-primary transition-colors" />
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                </div>
-
-                <CategoryEditDialog
-                  open={editingIndex !== null}
-                  onOpenChange={(open) => !open && setEditingIndex(null)}
-                  onSave={() => {
-                    const values = form.getValues("draftCategory");
-                    if (values && editingIndex !== null) {
-                      if (editingIndex === -1) {
-                        prepend(values);
-                      } else {
-                        update(editingIndex, values);
-                      }
-                    }
-                    setEditingIndex(null);
-                  }}
-                />
-              </div>
-              <FormMessage>
-                {form.formState.errors.categories?.message}
-              </FormMessage>
-
               <div className="flex justify-end gap-4">
                 <Button
                   type="button"
@@ -328,7 +266,10 @@ export const CreateSiteForm = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || metadata?.noDomains}
+                >
                   {isSubmitting && (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   )}
@@ -339,106 +280,6 @@ export const CreateSiteForm = () => {
           </Form>
         </CardContent>
       </Card>
-
-      <div className="space-y-6">
-        <Card className="overflow-hidden border-primary/10 shadow-lg">
-          <CardHeader className="bg-primary/5 border-b border-primary/10">
-            <CardTitle className="flex items-center gap-2 text-primary font-bold">
-              <div className="p-1 bg-primary rounded-md">
-                <Wand2 className="w-4 h-4 text-primary-foreground" />
-              </div>
-              AI Category Generator
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6 space-y-4">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Describe your marketplace and let AI suggest relevant categories
-              for you.
-            </p>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase text-muted-foreground/70">
-                Custom Prompt (Optional)
-              </Label>
-              <Textarea
-                placeholder="e.g. Focus on high-end fashion and luxury accessories..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                rows={5}
-                className="text-sm border-muted-foreground/20 focus:border-primary transition-all resize-none"
-              />
-            </div>
-            <Button
-              className="w-full shadow-md hover:shadow-lg transition-all group"
-              onClick={handleGenerateCategories}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                  Generate Suggestions
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <AnimatePresence>
-          {aiCategories.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  Suggestions
-                </h4>
-                <Badge
-                  color="primary"
-                  className="text-[10px] font-medium bg-primary/5 text-primary border-primary/20"
-                >
-                  {aiCategories.length} available
-                </Badge>
-              </div>
-              <div className="grid gap-3">
-                {aiCategories.map((cat, index) => (
-                  <motion.div
-                    key={`${cat.name}-${index}`}
-                    layout
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleSelectCategory(cat, index)}
-                    className="p-3 border rounded-xl bg-card hover:border-primary/40 cursor-pointer shadow-sm hover:shadow-md group transition-all relative overflow-hidden"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-sm group-hover:text-primary transition-colors">
-                          {cat.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                          {cat.description}
-                        </p>
-                      </div>
-                      <div className="ml-2 mt-1 shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
-                        <div className="p-1 bg-primary/10 rounded-full">
-                          <Plus className="w-3.5 h-3.5 text-primary" />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
     </div>
   );
 };

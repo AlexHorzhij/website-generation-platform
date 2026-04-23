@@ -16,6 +16,8 @@ const ProfileInfo = () => {
   const { logout } = useLogout();
 
   const { name, role } = JSON.parse(localStorage.getItem("userGM") || "{}");
+  const displayName =
+    typeof name === "string" && name.trim().length > 0 ? name : "User";
 
   const userAvatar = "/images/avatar/av-1.jpg";
 
@@ -26,14 +28,14 @@ const ProfileInfo = () => {
           <div className=" flex items-center gap-3  text-default-800 ">
             <Image
               src={userAvatar}
-              alt={name}
+              alt={`${displayName} avatar`}
               width={36}
               height={36}
               className="rounded-full"
             />
 
             <div className="text-sm font-medium  capitalize lg:block hidden  ">
-              {name}
+              {displayName}
             </div>
             <span className="text-base  me-2.5 lg:inline-block hidden">
               <Icon icon="heroicons-outline:chevron-down"></Icon>
@@ -44,7 +46,7 @@ const ProfileInfo = () => {
           <DropdownMenuLabel className="flex gap-2 items-center mb-1 p-3">
             <div className="flex flex-col gap-2">
               <div className="text-sm font-medium text-default-800 capitalize ">
-                {name}
+                {displayName}
               </div>
               <div className="text-sm font-medium text-default-400 capitalize ">
                 {role}

@@ -45,16 +45,37 @@ export interface CreateSiteRequest {
   themeId: number;
   currency: string;
   description: string;
-  categories: {
-    name: string;
-    description: string;
-    nameEn?: string;
-    descriptionEn?: string;
-    seoTitle?: string;
-    seoDescription?: string;
-    h1?: string;
-    text?: string;
+  language: string;
+  categories?:
+    | {
+        name: string;
+        description: string;
+        nameEn?: string;
+        descriptionEn?: string;
+        seoTitle?: string;
+        seoDescription?: string;
+        h1?: string;
+        text?: string;
+      }[]
+    | null;
+}
+
+export interface SiteMetadata {
+  availableDomains: {
+    domainName: string;
+    regionId: string;
+    owner: SiteOwner;
+    price: number;
+    currency: string;
+    renewalPrice: number;
+    hasMarketplace: boolean;
   }[];
+  themes: {
+    id: number;
+    name: string;
+  }[];
+  languages: string[];
+  noDomains: boolean;
 }
 
 export interface UpdateSiteRequest {

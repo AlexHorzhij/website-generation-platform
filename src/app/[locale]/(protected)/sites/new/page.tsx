@@ -1,11 +1,14 @@
-import { getTranslations } from "next-intl/server";
 import { CreateSiteForm } from "../_components/create-site-form";
 import { Link } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 
-const CreateSitePage = async () => {
-  const t = await getTranslations("SitesManagement");
+interface CreateSitePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+const CreateSitePage = async ({ params }: CreateSitePageProps) => {
+  await params;
 
   return (
     <div className="space-y-6">

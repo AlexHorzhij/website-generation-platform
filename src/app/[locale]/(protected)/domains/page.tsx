@@ -5,8 +5,13 @@ import { DomainService } from "@/api/services/domain-service";
 import { domainKeys } from "@/api/hooks/use-domains";
 import { DomainsClient } from "./_components/domains-client";
 
-const DomainsPage = async () => {
-  const t = await getTranslations("DomainsManagement");
+interface DomainsPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+const DomainsPage = async ({ params }: DomainsPageProps) => {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "DomainsManagement" });
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

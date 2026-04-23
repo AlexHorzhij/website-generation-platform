@@ -17,6 +17,12 @@ const schema = z.object({
   username: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
+
+const DEMO_CREDENTIALS = {
+  username: "demo@gomarket.demo",
+  password: "demo1234",
+};
+
 const LoginForm = () => {
   const { mutate: login, isPending } = useLogin();
   const [passwordType, setPasswordType] = React.useState("password");
@@ -31,6 +37,7 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -46,8 +53,33 @@ const LoginForm = () => {
     console.log("loginData", loginData);
   };
 
+  const applyDemoCredentials = () => {
+    setValue("username", DEMO_CREDENTIALS.username, { shouldValidate: true });
+    setValue("password", DEMO_CREDENTIALS.password, { shouldValidate: true });
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mt-5 2xl:mt-7 space-y-4">
+      <div className="rounded-lg border border-default-200 bg-default-50 p-3">
+        <p className="text-sm font-medium text-default-900">Demo access</p>
+        <p className="text-xs text-default-600 mt-1">
+          Email: <span className="font-mono">{DEMO_CREDENTIALS.username}</span>
+        </p>
+        <p className="text-xs text-default-600">
+          Password: <span className="font-mono">{DEMO_CREDENTIALS.password}</span>
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          disabled={isPending}
+          onClick={applyDemoCredentials}
+        >
+          Use demo credentials
+        </Button>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="email" className=" font-medium text-default-600">
           Email{" "}

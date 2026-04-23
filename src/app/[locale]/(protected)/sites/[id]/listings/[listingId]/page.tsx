@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageLayout } from "@/components/layouts/page-layout";
 import { ListingDetailsView } from "../_components/listing-details-view";
 import { EditListingBtn } from "../_components/edit-listing-btn";
+import { routing } from "@/i18n/routing";
 
 interface ListingDetailsPageProps {
   params: Promise<{
@@ -11,6 +12,26 @@ interface ListingDetailsPageProps {
     id: string;
     listingId: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  const sites = await SiteService.getSites();
+  const locales = routing.locales;
+
+  const params = await Promise.all(
+    sites.map(async (site) => {
+      const listings = await ListingService.getListingsBySiteId(site.id);
+      return locales.flatMap((locale) =>
+        listings.map((listing) => ({
+          locale,
+          id: String(site.id),
+          listingId: String(listing.id),
+        })),
+      );
+    }),
+  );
+
+  return params.flat();
 }
 
 const ListingDetailsPage = async ({ params }: ListingDetailsPageProps) => {

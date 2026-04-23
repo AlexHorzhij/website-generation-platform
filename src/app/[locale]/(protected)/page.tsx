@@ -10,8 +10,13 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { SiteService } from "@/api/services/site-service";
 
-const OverviewPage = async () => {
-  const t = await getTranslations("DashboardStats");
+interface OverviewPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+const OverviewPage = async ({ params }: OverviewPageProps) => {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "DashboardStats" });
   const statsData = await SiteService.getDashboardStatistics();
 
   const stats = [

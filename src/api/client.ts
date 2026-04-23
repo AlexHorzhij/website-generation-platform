@@ -3,6 +3,7 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
+import { mockApiAdapter } from "@/api/mocks/mock-backend";
 const isRedirectError = (error: any): boolean => {
   return !!(
     error &&
@@ -18,10 +19,12 @@ const BASE_URL = IS_SERVER
   : "/api";
 
 const VERSION = process.env.NEXT_PUBLIC_API_VERSION || "v1";
+const IS_MOCK_API = true;
 
 const apiClient = axios.create({
   baseURL: `${BASE_URL.replace(/\/$/, "")}/${VERSION}`,
   withCredentials: true,
+  adapter: mockApiAdapter,
   headers: {
     "Content-Type": "application/json",
     "X-API-Key": "1111",
@@ -32,7 +35,7 @@ const apiClient = axios.create({
 // Request interceptor: Handling authentication and forwarding cookies
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    if (IS_SERVER) {
+    if (IS_SERVER && !IS_MOCK_API) {
       try {
         const { cookies } = await import("next/headers");
         const cookieStore = await cookies();
