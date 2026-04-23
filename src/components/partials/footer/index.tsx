@@ -2,6 +2,7 @@ import FooterContent from "./footer-content";
 import { Link } from "@/components/navigation";
 import Image from "next/image";
 import { Icon } from "@/components/ui/icon";
+import { withBasePath } from "@/lib/asset-path";
 
 const DashCodeFooter = async () => {
   return (
@@ -30,7 +31,7 @@ const DashCodeFooter = async () => {
         >
           <div className="h-[50px] w-[50px] rounded-full relative left-[0px] top-[0px] custom-dropshadow">
             <Image
-              src="/images/avatar/av-1.jpg"
+              src={withBasePath("/images/avatar/av-1.jpg")}
               alt="dashcode"
               width={50}
               height={50}

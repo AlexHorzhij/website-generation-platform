@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { withBasePath } from "@/lib/asset-path";
 
 const Logo = () => {
   const { theme: mode } = useTheme();
@@ -8,7 +9,9 @@ const Logo = () => {
     <div>
       <Image
         src={
-          mode === "light" ? "/images/logo/logo.png" : "/images/logo/logo.png"
+          mode === "light"
+            ? withBasePath("/images/logo/logo.png")
+            : withBasePath("/images/logo/logo.png")
         }
         alt=""
         width={300}

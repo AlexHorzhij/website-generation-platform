@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { withBasePath } from "@/lib/asset-path";
 
 export default function LocalSwitcher() {
   const [isPending, startTransition] = useTransition();
@@ -32,7 +33,7 @@ export default function LocalSwitcher() {
         <SelectItem value="en" className="border-none cursor-pointer">
           <div className="flex items-center gap-1">
             <Image
-              src="/images/all-img/flag-1.png"
+              src={withBasePath("/images/all-img/flag-1.png")}
               alt="flag"
               width={24}
               height={24}
@@ -46,7 +47,7 @@ export default function LocalSwitcher() {
         <SelectItem className="cursor-pointer" value="uk">
           <div className="flex items-center gap-1">
             <Image
-              src="/images/all-img/flag-ua.png"
+              src={withBasePath("/images/all-img/flag-ua.png")}
               alt="flag"
               width={24}
               height={24}

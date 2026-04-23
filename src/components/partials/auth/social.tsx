@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/asset-path";
 
 const Social = ({ locale }: { locale: string }) => {
   return (
@@ -13,7 +14,7 @@ const Social = ({ locale }: { locale: string }) => {
               width={300}
               height={300}
               className="w-full h-full"
-              src="/images/icon/tw.svg"
+              src={withBasePath("/images/icon/tw.svg")}
               alt=""
             />
           </a>
@@ -27,7 +28,7 @@ const Social = ({ locale }: { locale: string }) => {
               width={300}
               height={300}
               className="w-full h-full"
-              src="/images/icon/fb.svg"
+              src={withBasePath("/images/icon/fb.svg")}
               alt=""
             />
           </a>
@@ -41,7 +42,7 @@ const Social = ({ locale }: { locale: string }) => {
               width={300}
               height={300}
               className="w-full h-full"
-              src="/images/icon/in.svg"
+              src={withBasePath("/images/icon/in.svg")}
               alt=""
             />
           </a>
@@ -55,7 +56,7 @@ const Social = ({ locale }: { locale: string }) => {
               width={300}
               height={300}
               className="w-full h-full"
-              src="/images/icon/gp.svg"
+              src={withBasePath("/images/icon/gp.svg")}
               alt=""
             />
           </button>
