@@ -10,6 +10,7 @@ import {
 import { Icon } from "@/components/ui/icon";
 import Image from "next/image";
 import { useLogout } from "@/api/hooks/use-auth";
+import { withBasePath } from "@/lib/asset-path";
 
 const ProfileInfo = () => {
   // const { data: user } = useMe();
@@ -19,7 +20,7 @@ const ProfileInfo = () => {
   const displayName =
     typeof name === "string" && name.trim().length > 0 ? name : "User";
 
-  const userAvatar = "/images/avatar/av-1.jpg";
+  const userAvatar = withBasePath("/images/avatar/av-1.jpg");
 
   return (
     <div className="md:block hidden">

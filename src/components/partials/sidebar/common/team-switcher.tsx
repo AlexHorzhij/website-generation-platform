@@ -47,6 +47,7 @@ import { useConfig } from "@/hooks/use-config";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
 import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
+import { withBasePath } from "@/lib/asset-path";
 
 const groups = [
     {
@@ -117,7 +118,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                                 <AvatarImage
                                     height={24}
                                     width={24}
-                                    src="/images/avatar/av-1.jpg"
+                                    src={withBasePath("/images/avatar/av-1.jpg")}
                                     alt={selectedTeam.label}
                                     className="grayscale"
                                 />
@@ -138,7 +139,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                                     <AvatarImage
                                         height={38}
                                         width={38}
-                                        src="/images/avatar/av-1.jpg"
+                                        src={withBasePath("/images/avatar/av-1.jpg")}
                                         alt=""
                                         className="grayscale"
                                     />

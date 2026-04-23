@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { useConfig } from "@/hooks/use-config";
 import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { withBasePath } from "@/lib/asset-path";
 
 const Logo = () => {
   const [config] = useConfig();
@@ -26,7 +27,7 @@ const Logo = () => {
       <DashCodeLogo className="text-default-900" />
       {(!config?.collapsed || hovered) && (
         <Image
-          src="/images/logo/logo-text.png"
+          src={withBasePath("/images/logo/logo-text.png")}
           alt="logo"
           width={140}
           height={32}

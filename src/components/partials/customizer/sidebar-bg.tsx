@@ -1,5 +1,6 @@
 'use client'
 import { useConfig } from '@/hooks/use-config';
+import { withBasePath } from "@/lib/asset-path";
 import React, { useState } from 'react'
 import { Icon } from "@/components/ui/icon"
 import { cn } from "@/lib/utils";
@@ -7,8 +8,8 @@ const SidebarBg = () => {
   const [config, setConfig] = useConfig();
   const { sidebarBgImage } = config;
   const [selectedFiles, setSelectedFiles] = useState([
-    "/images/all-img/img-2.jpeg",
-    "/images/all-img/img-1.jpeg",
+    withBasePath("/images/all-img/img-2.jpeg"),
+    withBasePath("/images/all-img/img-1.jpeg"),
   ]);
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
