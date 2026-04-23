@@ -11,6 +11,7 @@ const githubPagesBasePath =
 
 const nextConfig = {
   output: "export",
+  trailingSlash: true,
   basePath: githubPagesBasePath,
   assetPrefix: githubPagesBasePath ? `${githubPagesBasePath}/` : undefined,
   images: {
